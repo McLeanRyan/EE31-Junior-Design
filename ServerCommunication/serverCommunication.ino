@@ -33,17 +33,27 @@ void setup() {
     IPAddress ip = WiFi.localIP();
     Serial.print("IP Address: ");
     Serial.println(ip);
+    Serial.println(clientID);
 }
 
 void loop() {
     // start Websocket Client
     Serial.println("starting WebSocket client");
     client.begin();
+    delay(1000);
     client.beginMessage(TYPE_TEXT);
     client.print(clientID);
     client.endMessage();
 
     while (client.connected()) {
+        if (Serial.available()) {
+            String input = Serial.readStringUntil('\n');
+            client.beginMessage(TYPE_TEXT);
+            client.print(input);
+            client.endMessage();
+            Serial.print("Sent from Serial: ");
+            Serial.println(input);
+        }
     }
 
     Serial.println("disconnected");
