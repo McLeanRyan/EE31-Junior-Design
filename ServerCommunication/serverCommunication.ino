@@ -33,7 +33,6 @@ void setup() {
     IPAddress ip = WiFi.localIP();
     Serial.print("IP Address: ");
     Serial.println(ip);
-    Serial.println(clientID);
 }
 
 void loop() {
@@ -41,11 +40,19 @@ void loop() {
     Serial.println("starting WebSocket client");
     client.begin();
     delay(1000);
+    Serial.println("Done connecting WebSocket client");
+
     client.beginMessage(TYPE_TEXT);
     client.print(clientID);
     client.endMessage();
 
     while (client.connected()) {
+        int messageSize = client.parseMessage();
+        if (messageSize > 0) {
+            String message = client.readString();
+            Serial.print("Received from server: ");
+            Serial.println(message);
+        }
         if (Serial.available()) {
             String input = Serial.readStringUntil('\n');
             client.beginMessage(TYPE_TEXT);
