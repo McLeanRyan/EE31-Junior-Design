@@ -77,7 +77,6 @@ void loop() {
             }
         }
 
-        // Button Interrupt
         if (buttonPressed) {
             buttonPressed = false; // clear flag
             nextState();
@@ -85,14 +84,14 @@ void loop() {
             Serial.println(state);
         }
     
-        if (Serial.available()) {
-            String input = Serial.readStringUntil('\n');
-            client.beginMessage(TYPE_TEXT);
-            client.print(input);
-            client.endMessage();
-            Serial.print("Sent from Serial: ");
-            Serial.println(input);
-        }
+        // if (Serial.available()) {
+        //     String input = Serial.readStringUntil('\n');
+        //     client.beginMessage(TYPE_TEXT);
+        //     client.print(input);
+        //     client.endMessage();
+        //     Serial.print("Sent from Serial: ");
+        //     Serial.println(input);
+        // }
 
         // Repeatedly blink to indicate current state 
         int blinkCount = state + 1;

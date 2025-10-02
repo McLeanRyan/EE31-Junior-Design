@@ -1,0 +1,17 @@
+/*
+ *  motorcontrol.h
+ *  Hoang Mai
+ *  10/02/2025
+ *
+ *
+ *  Motor Class will represent the functionality that a motor could perform
+ */
+
+using namespace std;
+
+class Motor {
+public:
+    Motor();
+private:
+
+};
