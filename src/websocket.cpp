@@ -1,3 +1,11 @@
+/*
+ *  websocket.cpp
+ *  Hoang Mai
+ *  10/02/2025
+ *
+ *
+ *  Initializes and sets up the functionalities of wifi and server communication
+ */
 #include "websocket.h"
 #include <ArduinoHttpClient.h>
 #include <WiFiNINA.h>
@@ -12,13 +20,5 @@ void initializeWifi(char ssid[], char pass[], int status)
         // Connect to WPA/WPA2 network:
         status = WiFi.begin(ssid, pass);
     }
-
-    // print the SSID of the network you're attached to:
-    Serial.print("SSID: ");
-    Serial.println(WiFi.SSID());
-
-    // print your WiFi shield's IP address:
-    IPAddress ip = WiFi.localIP();
-    Serial.print("IP Address: ");
-    Serial.println(ip);
+    Serial.print("Done\n");
 }
