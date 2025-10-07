@@ -12,6 +12,11 @@ using namespace std;
 class Motor {
 public:
     Motor();
+
+    void driveForward(int speed);
+    void driveBackward(int speed);
+    void stop();
+
 private:
 
 };

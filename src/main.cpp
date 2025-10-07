@@ -2,6 +2,7 @@
 #include <WiFiNINA.h>
 #include "secrets.h"
 #include "websocket.h"
+#include "motorcontrol.h"
 
 /////// you can enter your sensitive data in the Secret tab/arduino_secrets.h
 /////// WiFi Settings ///////
@@ -31,7 +32,7 @@ volatile bool buttonPressed = false;  // set in ISR
 States state = STOP;
 
 void nextState() {
-  state = (state + 1) % 7;
+  state = static_cast<States>((static_cast<int>(state) + 1) % 7);
 }
 
 // ISR
@@ -48,7 +49,13 @@ void setup() {
     initializeWifi(ssid, pass, status);
 }
 
+Motor motor;
+
 void loop() {
+    motor.driveBackward(100);
+    delay(1000);
+    motor.driveBackward(255);
+
     // start Websocket Client
     client.begin();
     delay(1000);
@@ -56,7 +63,7 @@ void loop() {
     client.beginMessage(TYPE_TEXT);
     client.print(clientID);
     client.endMessage();
-
+    
     while (client.connected()) {
         int messageSize = client.parseMessage();
         if (messageSize > 0) {

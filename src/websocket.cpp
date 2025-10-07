@@ -1,3 +1,11 @@
+/*
+ *  websocket.cpp
+ *  Hoang Mai
+ *  10/02/2025
+ *
+ *
+ *  Initializes and sets up the functionalities of wifi and server communication
+ */
 #include "websocket.h"
 #include <ArduinoHttpClient.h>
 #include <WiFiNINA.h>
