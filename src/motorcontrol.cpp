@@ -66,8 +66,67 @@ void Motor::driveBackward(int speed)
 /*  stop
     Description: stop the motor
 */
-void Motor::stop() {
+void Motor::stop() 
+{
     analogWrite(LEFT_ENABLE, 0);
     analogWrite(RIGHT_ENABLE, 0);
 }
+
+/* pivotCC
+   Description: Pivot the Robot Clock*/
+void Motor::pivotCW(int degree)
+{
+    // Speed to use for pivoting
+    int speed = 150;
+
+    // Set directions: left forward, right backward
+    digitalWrite(LEFT_CW, HIGH);
+    digitalWrite(LEFT_CC, LOW);
+    digitalWrite(RIGHT_CW, LOW);
+    digitalWrite(RIGHT_CC, HIGH);
+
+    // Enable motors
+    analogWrite(LEFT_ENABLE, speed);
+    analogWrite(RIGHT_ENABLE, speed);
+
+    // --- Timing-based rotation control ---
+    // Calibrate this constant experimentally for your robot:
+    // (milliseconds per degree)
+    const float ms_per_degree = 10.0; // adjust this value for accuracy
+
+    int duration = degree * ms_per_degree;
+
+    delay(duration);  // rotate for calculated time
+
+    // Stop both motors after turning
+    stop();
+}
+
+void Motor::pivotCCW(int degree)
+{
+    // Speed to use for pivoting
+    int speed = 150;
+
+    // Set directions: left backward, right forward
+    digitalWrite(LEFT_CW, LOW);
+    digitalWrite(LEFT_CC, HIGH);
+    digitalWrite(RIGHT_CW, HIGH);
+    digitalWrite(RIGHT_CC, LOW);
+
+    // Enable motors
+    analogWrite(LEFT_ENABLE, speed);
+    analogWrite(RIGHT_ENABLE, speed);
+
+    // Use the same calibration as pivotCW()
+    const float ms_per_degree = 10.0;  // adjust experimentally
+
+    int duration = degree * ms_per_degree;
+
+    delay(duration);  // rotate for calculated time
+
+    // Stop both motors after turning
+    stop();
+}
+
+
 
