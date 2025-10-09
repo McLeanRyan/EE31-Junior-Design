@@ -13,9 +13,14 @@ class Motor {
 public:
     Motor();
 
+    void stop();
     void driveForward(int speed);
     void driveBackward(int speed);
-    void stop();
+    void pivotCW(int degree);
+    void pivotCCW(int degree);
+    void rightTurn(int turnRadius);
+    void leftTurn(int turnRadius);
+
 
 private:
 
