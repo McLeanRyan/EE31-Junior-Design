@@ -8,6 +8,7 @@
  */
 
 using namespace std;
+#include "state.h"
 
 class Motor {
 public:
@@ -23,5 +24,6 @@ public:
 
 
 private:
-
 };
+
+void handleState(Motor& motor, States state);
