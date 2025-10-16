@@ -1,5 +1,5 @@
 int ambient = 0;
-int delay_time = 500;
+int delay_time = 50;
 
 int BLACK = 0;
 int BLUE = 1;
@@ -12,10 +12,10 @@ int current_red = 0;
 int current_class = 0;
 
 int training[4][4] = {
-    {-35, -60, 0, BLACK},
-    {-170, -200, 0, BLUE},
-    {-300, -350, -50, YELLOW},
-    {-110, -100, -25, RED}
+    {-35, -50, 0, BLACK},
+    {-170, -180, 0, BLUE},
+    {-110, -100, -50, YELLOW},
+    {-70, -60, -20, RED}
   };
 
 void setup() {
@@ -34,22 +34,22 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   digitalWrite(13, HIGH);
-  Serial.print("RED: ");
-  Serial.println(analogRead(A5)-ambient);
+  // Serial.print("RED: ");
+  // Serial.println(analogRead(A5)-ambient);
   current_red = analogRead(A5)-ambient;
   delay(delay_time);
 
   digitalWrite(13, LOW);
   digitalWrite(12, HIGH);
-  Serial.print("BLUE: ");
-  Serial.println(analogRead(A5)-ambient);
+  // Serial.print("BLUE: ");
+  // Serial.println(analogRead(A5)-ambient);
   current_blue = analogRead(A5)-ambient;
   delay(delay_time);
 
   digitalWrite(12, LOW);
   digitalWrite(11, HIGH);
-  Serial.print("YELLOW: ");
-  Serial.println(analogRead(A5)-ambient);
+  // Serial.print("YELLOW: ");
+  // Serial.println(analogRead(A5)-ambient);
   current_yellow = analogRead(A5)-ambient;
   delay(delay_time);
 
@@ -74,7 +74,8 @@ int calculateClass(int blue1, int yellow1, int red1) {
     yellow2 = training[i][1];
     red2 = training[i][2];
     temp_distance = pow((pow((blue1-blue2),2))+pow((yellow1-yellow2),2)+pow((red1-red2),2),0.5);
-    Serial.println(temp_distance);
+    // Serial.println(i);
+    // Serial.println(temp_distance);
     
     if (temp_distance < distance) {
       distance = temp_distance;
