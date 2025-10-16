@@ -1,0 +1,44 @@
+/* turnRight
+   Description: Turns the bot to the right with a given turnRadius factor
+*/
+void Motor::turnRight(int turnRadius) {
+    // turnRadius can control duration — tweak this experimentally
+    int outerSpeed = 150;   // right wheel goes slower (inner wheel)
+    int innerSpeed = 100;
+
+    // Left wheel forward (outer), Right wheel forward but slower (inner)
+    digitalWrite(LEFT_CW, HIGH);
+    digitalWrite(LEFT_CC, LOW);
+    digitalWrite(RIGHT_CW, HIGH);
+    digitalWrite(RIGHT_CC, LOW);
+
+    analogWrite(LEFT_ENABLE, outerSpeed);
+    analogWrite(RIGHT_ENABLE, innerSpeed);
+
+    int duration = turnRadius * 10;   // e.g., turnRadius=10 gives ~100ms
+    delay(duration);
+
+    stop();
+}
+
+/* turnLeft
+   Description: Turns the bot to the left with a given turnRadius factor
+*/
+void Motor::turnLeft(int turnRadius) {
+    int outerSpeed = 150;
+    int innerSpeed = 100;
+
+    // Right wheel forward (outer), Left wheel forward but slower (inner)
+    digitalWrite(LEFT_CW, HIGH);
+    digitalWrite(LEFT_CC, LOW);
+    digitalWrite(RIGHT_CW, HIGH);
+    digitalWrite(RIGHT_CC, LOW);
+
+    analogWrite(LEFT_ENABLE, innerSpeed);
+    analogWrite(RIGHT_ENABLE, outerSpeed);
+
+    int duration = turnRadius * 20;   // can tweak duration value
+    delay(duration);
+
+    stop();
+}
