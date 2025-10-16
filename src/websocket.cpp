@@ -7,7 +7,6 @@
  *  Initializes and sets up the functionalities of wifi and server communication
  */
 #include "websocket.h"
-#include <ArduinoHttpClient.h>
 #include <WiFiNINA.h>
 
 void initializeWifi(char ssid[], char pass[], int status)
@@ -21,4 +20,31 @@ void initializeWifi(char ssid[], char pass[], int status)
         status = WiFi.begin(ssid, pass);
     }
     Serial.print("Done\n");
+}
+
+String parseMessage(WebSocketClient& client) {
+    String message = client.readString();
+    message.trim();
+
+    // Filter out non-printable characters (protects from binary garbage)
+    String filtered = "";
+    for (int i = 0; i < message.length(); i++) {
+        if (isPrintable(message[i])) {
+            filtered += message[i];
+        }
+    }
+    return filtered;
+}
+
+int parseState(String message)
+{
+    char lastChar = ' ';
+    Serial.println(message);
+
+    if (message.indexOf("WebClient_F79721857DC5") == -1) return -1;
+    if (message.length() == 0) return -1;
+
+    lastChar = message.charAt(message.length() - 1);
+    int newState = lastChar - '0';
+    return newState;
 }

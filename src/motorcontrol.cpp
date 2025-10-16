@@ -17,6 +17,42 @@
 #define RIGHT_CC 4
 #define RIGHT_CW 5
 
+void handleState(Motor& motor, States state) {
+    switch (state) {
+        case STOP:
+            motor.stop();
+            break;
+
+        case FORWARD:
+            motor.driveForward(200);      
+            break;
+
+        case BACKWARD:
+            motor.driveBackward(200);
+            break;
+
+        case PivotClockwise:
+            motor.pivotCW(90);            
+            break;
+
+        case PivotCounterClockwise:
+            motor.pivotCCW(90);
+            break;
+
+        case TurnRight:
+            motor.rightTurn(150);
+            break;
+
+        case TurnLeft:
+            motor.leftTurn(150);
+            break;
+
+        default:
+            motor.stop();
+            break;
+    }
+}
+
 /*  Motor
     Description: Motor Constructor that enables the coresponding pins
 */
@@ -76,8 +112,9 @@ void Motor::stop()
    Description: Pivot the Robot Clock*/
 void Motor::pivotCW(int degree)
 {
+    delay(1000);
     // Speed to use for pivoting
-    int speed = 150;
+    int speed = 100;
 
     // Set directions: left forward, right backward
     digitalWrite(LEFT_CW, HIGH);
@@ -89,10 +126,11 @@ void Motor::pivotCW(int degree)
     analogWrite(LEFT_ENABLE, speed);
     analogWrite(RIGHT_ENABLE, speed);
 
+    delay(1000);
+
     // --- Timing-based rotation control ---
     // Calibrate this constant experimentally for your robot:
-    // (milliseconds per degree)
-    const float ms_per_degree = 10.0; // adjust this value for accuracy
+    const float ms_per_degree = 49.0; // adjust this value for accuracy
 
     int duration = degree * ms_per_degree;
 
@@ -118,7 +156,7 @@ void Motor::pivotCCW(int degree)
     analogWrite(RIGHT_ENABLE, speed);
 
     // Use the same calibration as pivotCW()
-    const float ms_per_degree = 10.0;  // adjust experimentally
+    const float ms_per_degree = 49.0;  
 
     int duration = degree * ms_per_degree;
 
@@ -126,6 +164,15 @@ void Motor::pivotCCW(int degree)
 
     // Stop both motors after turning
     stop();
+}
+
+void Motor::rightTurn(int turnRadius)
+{
+
+}
+
+void Motor::leftTurn(int turnRadius) {
+
 }
 
 
