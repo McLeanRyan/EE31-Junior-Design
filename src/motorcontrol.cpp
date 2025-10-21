@@ -17,42 +17,6 @@
 #define RIGHT_CC 4
 #define RIGHT_CW 5
 
-void handleState(Motor& motor, States state) {
-    switch (state) {
-        case STOP:
-            motor.stop();
-            break;
-
-        case FORWARD:
-            motor.driveForward(200);      
-            break;
-
-        case BACKWARD:
-            motor.driveBackward(200);
-            break;
-
-        case PivotClockwise:
-            motor.pivotCW(90);            
-            break;
-
-        case PivotCounterClockwise:
-            motor.pivotCCW(90);
-            break;
-
-        case TurnRight:
-            motor.rightTurn(150);
-            break;
-
-        case TurnLeft:
-            motor.leftTurn(150);
-            break;
-
-        default:
-            motor.stop();
-            break;
-    }
-}
-
 /*  Motor
     Description: Motor Constructor that enables the coresponding pins
 */
@@ -109,12 +73,11 @@ void Motor::stop()
 }
 
 /* pivotCC
-   Description: Pivot the Robot Clock*/
-void Motor::pivotCW(int degree)
+   Description: Pivot the Robot counter Clockwise*/
+void Motor::pivotCCW()
 {
-    delay(1000);
     // Speed to use for pivoting
-    int speed = 100;
+    int speed = 150;
 
     // Set directions: left forward, right backward
     digitalWrite(LEFT_CW, HIGH);
@@ -126,53 +89,71 @@ void Motor::pivotCW(int degree)
     analogWrite(LEFT_ENABLE, speed);
     analogWrite(RIGHT_ENABLE, speed);
 
-    delay(1000);
-
-    // --- Timing-based rotation control ---
-    // Calibrate this constant experimentally for your robot:
-    const float ms_per_degree = 49.0; // adjust this value for accuracy
-
-    int duration = degree * ms_per_degree;
-
-    delay(duration);  // rotate for calculated time
-
-    // Stop both motors after turning
-    stop();
 }
 
-void Motor::pivotCCW(int degree)
+/* pivotCCW
+   Description: Pivot the Robot clockwise*/
+void Motor::pivotCW()
 {
-    // Speed to use for pivoting
+    // Speed for in-place pivoting
     int speed = 150;
 
-    // Set directions: left backward, right forward
+    // Left motor moves backward
     digitalWrite(LEFT_CW, LOW);
     digitalWrite(LEFT_CC, HIGH);
+
+    // Right motor moves forward
     digitalWrite(RIGHT_CW, HIGH);
     digitalWrite(RIGHT_CC, LOW);
 
-    // Enable motors
+    // Apply same speed to both motors for in-place rotation
     analogWrite(LEFT_ENABLE, speed);
     analogWrite(RIGHT_ENABLE, speed);
+}
 
-    // Use the same calibration as pivotCW()
-    const float ms_per_degree = 49.0;  
+/* turnRight
+   Description: Turns the bot to the right with a given turnRadius factor
+*/
+void Motor::turnLeft(int turnRadius) {
+    // turnRadius can control duration — tweak this experimentally
+    int outerSpeed = 150;   // right wheel goes slower (inner wheel)
+    int innerSpeed = 100;
 
-    int duration = degree * ms_per_degree;
+    // Left wheel forward (outer), Right wheel forward but slower (inner)
+    digitalWrite(LEFT_CW, HIGH);
+    digitalWrite(LEFT_CC, LOW);
+    digitalWrite(RIGHT_CW, HIGH);
+    digitalWrite(RIGHT_CC, LOW);
 
-    delay(duration);  // rotate for calculated time
+    analogWrite(LEFT_ENABLE, outerSpeed);
+    analogWrite(RIGHT_ENABLE, innerSpeed);
 
-    // Stop both motors after turning
+    int duration = turnRadius * 10;   // e.g., turnRadius=10 gives ~100ms
+    delay(duration);
+
     stop();
 }
 
-void Motor::rightTurn(int turnRadius)
-{
+/* turnLeft
+   Description: Turns the bot to the left with a given turnRadius factor
+*/
+void Motor::turnRight(int turnRadius) {
+    int outerSpeed = 150;
+    int innerSpeed = 100;
 
-}
+    // Right wheel forward (outer), Left wheel forward but slower (inner)
+    digitalWrite(LEFT_CW, HIGH);
+    digitalWrite(LEFT_CC, LOW);
+    digitalWrite(RIGHT_CW, HIGH);
+    digitalWrite(RIGHT_CC, LOW);
 
-void Motor::leftTurn(int turnRadius) {
+    analogWrite(LEFT_ENABLE, innerSpeed);
+    analogWrite(RIGHT_ENABLE, outerSpeed);
 
+    int duration = turnRadius * 20;   // can tweak duration value
+    delay(duration);
+
+    stop();
 }
 
 
