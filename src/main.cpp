@@ -20,10 +20,6 @@ int status = WL_IDLE_STATUS;
 volatile bool buttonPressed = false;  // set in ISR
 States state = STOP;
 
-void nextState() {
-  state = static_cast<States>((static_cast<int>(state) + 1) % 7);
-}
-
 // ISR
 void handleButtonInterrupt() {
   buttonPressed = true;
@@ -37,6 +33,8 @@ void setup() {
 
     initializeWifi(ssid, pass, status);
 }
+
+int current_blue, current_yellow, current_red, current_class = 0;
 
 Motor motor;
 
@@ -64,6 +62,12 @@ void loop() {
                 state = (States) newState;
                 Serial.print("Server set state to: ");
                 Serial.println(state);
+
+                // client.beginMessage(TYPE_TEXT);
+                // client.print("state updated to ");
+                // client.print(state);
+                // client.endMessage();
+                // Serial.println("sent to server");
             }
         }
 

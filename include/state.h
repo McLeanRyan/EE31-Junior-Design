@@ -1,5 +1,6 @@
 #ifndef STATES_H
 #define STATES_H
+#include "motorcontrol.h"
 
 // Define your shared state machine enum here
 enum States {
@@ -11,5 +12,10 @@ enum States {
     TurnRight,
     TurnLeft
 };
+
+class Motor;
+
+void nextState();
+void handleState(Motor& motor, States state);
 
 #endif
