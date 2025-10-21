@@ -63,11 +63,11 @@ void loop() {
                 Serial.print("Server set state to: ");
                 Serial.println(state);
 
-                // client.beginMessage(TYPE_TEXT);
-                // client.print("state updated to ");
-                // client.print(state);
-                // client.endMessage();
-                // Serial.println("sent to server");
+                client.beginMessage(TYPE_TEXT);
+                client.print("state updated to ");
+                client.print(state);
+                client.endMessage();
+                Serial.println("sent to server");
             }
         }
 
