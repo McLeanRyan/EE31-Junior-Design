@@ -3,12 +3,12 @@
 #include "secrets.h"
 #include "websocket.h"
 #include "motorcontrol.h"
+#include "state.h"
 
 /////// you can enter your sensitive data in the Secret tab/arduino_secrets.h
 /////// WiFi Settings ///////
 char ssid[] = WIFI_NAME;
 char pass[] = WIFI_PASSWORD;
-
 char serverAddress[] = ADDRESS; // server address
 int port = 80;
 
@@ -16,24 +16,9 @@ WiFiClient wifi;
 WebSocketClient client = WebSocketClient(wifi, serverAddress, port);
 String clientID = CLIENT_ID; //Insert your Server ID Here!
 int status = WL_IDLE_STATUS;
-int count = 0;
-
-enum States {
-  STOP = 0,
-  FORWARD,
-  BACKWARD,
-  PivotClockwise,
-  PivotCounterClockwise,
-  TurnRight,
-  TurnLeft
-};
 
 volatile bool buttonPressed = false;  // set in ISR
 States state = STOP;
-
-void nextState() {
-  state = static_cast<States>((static_cast<int>(state) + 1) % 7);
-}
 
 // ISR
 void handleButtonInterrupt() {
@@ -45,51 +30,53 @@ void setup() {
     pinMode(A0, INPUT_PULLUP);
 
     attachInterrupt(digitalPinToInterrupt(A0), handleButtonInterrupt, FALLING);
-    
+
     initializeWifi(ssid, pass, status);
 }
+
+int current_blue, current_yellow, current_red, current_class = 0;
 
 Motor motor;
 
 void loop() {
-    motor.driveBackward(100);
-    delay(1000);
-    motor.driveBackward(255);
+    delay(100);
 
-    // start Websocket Client
-    client.begin();
-    delay(1000);
-
-    client.beginMessage(TYPE_TEXT);
-    client.print(clientID);
-    client.endMessage();
+    if (!client.connected()) {
+        client.begin();
+        delay(100);
+        client.beginMessage(TYPE_TEXT);
+        client.print(clientID);
+        client.endMessage();
+    }
     
     while (client.connected()) {
         int messageSize = client.parseMessage();
         if (messageSize > 0) {
-            String message = client.readString();
-            message.trim();
-            Serial.print("Received from server: ");
-            Serial.println(message);
-            char lastChar = message.charAt(message.length() - 1);
 
-            int newState = lastChar - '0';
+            String message = parseMessage(client);
+            Serial.println("Message received");
+            Serial.println(message);
+            int newState   = parseState(message);
+            Serial.println(newState);
             if (newState >= STOP && newState <= TurnLeft) {
-                state = (States)newState;
+                state = (States) newState;
                 Serial.print("Server set state to: ");
                 Serial.println(state);
-            } else {
-                Serial.print("Invalid state received: ");
-                Serial.println(message);
+
+                client.beginMessage(TYPE_TEXT);
+                client.print("state updated to ");
+                client.print(state);
+                client.endMessage();
+                Serial.println("sent to server");
             }
         }
 
-        if (buttonPressed) {
-            buttonPressed = false; // clear flag
-            nextState();
-            Serial.print("State changed to: ");
-            Serial.println(state);
-        }
+        // if (buttonPressed) {
+        //     buttonPressed = false; // clear flag
+        //     nextState();
+        //     Serial.print("State changed to: ");
+        //     Serial.println(state);
+        // }
     
         // if (Serial.available()) {
         //     String input = Serial.readStringUntil('\n');
@@ -101,16 +88,16 @@ void loop() {
         // }
 
         // Repeatedly blink to indicate current state 
-        int blinkCount = state + 1;
+        // int blinkCount = state + 1;
 
-        for (int i = 0; i < blinkCount; i++) {
-            digitalWrite(LED_BUILTIN, HIGH);
-            delay(250);
-            digitalWrite(LED_BUILTIN, LOW);
-            delay(250);
-        }
+        // for (int i = 0; i < blinkCount; i++) {
+        //     digitalWrite(LED_BUILTIN, HIGH);
+        //     delay(250);
+        //     digitalWrite(LED_BUILTIN, LOW);
+        //     delay(250);
+        // }
 
-        delay(1000); // pause before blinking again
+        handleState(motor, state);
     }
 
     Serial.println("disconnected");

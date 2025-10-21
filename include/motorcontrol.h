@@ -6,8 +6,11 @@
  *
  *  Motor Class will represent the functionality that a motor could perform
  */
+#ifndef MOTORCONTROL_H
+#define MOTORCONTROL_H
 
 using namespace std;
+#include "state.h"
 
 class Motor {
 public:
@@ -16,12 +19,12 @@ public:
     void stop();
     void driveForward(int speed);
     void driveBackward(int speed);
-    void pivotCW(int degree);
-    void pivotCCW(int degree);
-    void rightTurn(int turnRadius);
-    void leftTurn(int turnRadius);
-
+    void pivotCW();
+    void pivotCCW();
+    void turnRight(int turnRadius);
+    void turnLeft(int turnRadius);
 
 private:
-
 };
+
+#endif
