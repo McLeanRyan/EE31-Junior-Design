@@ -23,6 +23,7 @@ void initializeWifi(char ssid[], char pass[], int status)
 }
 
 String parseMessage(WebSocketClient& client) {
+    String prefix = "WebClient_56FC703ACE1A";
     String message = client.readString();
     message.trim();
 
@@ -31,6 +32,17 @@ String parseMessage(WebSocketClient& client) {
     for (int i = 0; i < message.length(); i++) {
         if (isPrintable(message[i])) {
             filtered += message[i];
+        }
+    }
+    
+    if (filtered.startsWith(prefix)) {
+        // Find the dot position
+        int dotIndex = filtered.indexOf('.');
+        
+        if (dotIndex != -1) {
+            // Extract everything after the dot
+            filtered = "Other Bot: " + filtered.substring(dotIndex + 1);
+            Serial.println(filtered); 
         }
     }
     return filtered;
@@ -48,3 +60,4 @@ int parseState(String message)
     int newState = lastChar - '0';
     return newState;
 }
+
