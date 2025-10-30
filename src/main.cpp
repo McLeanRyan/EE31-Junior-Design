@@ -38,44 +38,6 @@ int current_blue, current_yellow, current_red, current_class = 0;
 
 Motor motor;
 
-void loop() {
-    delay(100);
-
-    if (!client.connected()) {
-        client.begin();
-        delay(100);
-        client.beginMessage(TYPE_TEXT);
-        client.print(clientID);
-        client.endMessage();
-    }
-    
-    while (client.connected()) {
-        int messageSize = client.parseMessage();
-        if (messageSize > 0) {
-
-            String message = parseMessage(client);
-            Serial.println("Message received");
-            Serial.println(message);
-            int newState   = parseState(message);
-            Serial.println(newState);
-            if (newState >= STOP && newState <= TurnLeft) {
-                state = (States) newState;
-                Serial.print("Server set state to: ");
-                Serial.println(state);
-
-                // client.beginMessage(TYPE_TEXT);
-                // client.print("state updated to ");
-                // client.print(state);
-                // client.endMessage();
-                // Serial.println("sent to server");
-            }
-        }
-        handleState(motor, state);
-    }
-
-    Serial.println("disconnected");
-}
-
 // Both bots are next to each other and not moving.
 // Bot 1 flashes their Arduino LED.
 // Bot 1 communicates to Bot 2 to move forward for five seconds. 
@@ -86,9 +48,63 @@ void loop() {
 
 void remoteCommanBotMotionsWithPartner() {
     while (client.connected()) {
-        int messageSize = client.parseMessage();
-        if (messageSize > 0) {
-            String message = parseMessage(client);
+        if (client.parseMessage() > 0) {
+            String parsed = parseMessage(client);
+            
+            if (parsed.startsWith("PARTNER:")) {
+                String command = parsed.substring(8); // strip "PARTNER:"
+                if (command == "State: 1") {
+                    handleState(motor, (States) 1);
+                    delay(5000);
+                    handleState(motor, (States) 0 );
+
+                    /* Flash LED*/
+                    digitalWrite(LED_BUILTIN, HIGH);
+                    delay(300);
+                    digitalWrite(LED_BUILTIN, LOW);
+
+                    client.beginMessage(TYPE_TEXT);
+                    client.print("State: 2");
+                    client.endMessage();
+                    Serial.println("MOVE sent to server");
+                }
+            }
         }
     }
+}
+
+void loop() {
+    delay(100);
+
+    if (!client.connected()) {
+        client.begin();
+        delay(100);
+        client.beginMessage(TYPE_TEXT);
+        client.print(clientID);
+        client.endMessage();
+    }
+
+    //remoteCommanBotMotionsWithPartner();
+    
+    while (client.connected()) {
+        if (client.parseMessage() > 0) {
+            /* Read Message Constantly from the Server, only from our bot / DEI */
+            String parsed = parseMessage(client);
+            String command;
+            if (parsed.startsWith("PARTNER:")) {
+                command = parsed.substring(8); // strip "PARTNER:"
+            } else if (parsed.startsWith("SELF:")) {
+                command = parsed.substring(5);
+            }
+            int newState   = parseState(command);
+            if (newState >= STOP && newState <= TurnLeft) {
+                state = (States) newState;
+                Serial.print("Server set state to: ");
+                Serial.println(state);
+            }
+        }
+        handleState(motor, state);
+    }
+
+    Serial.println("disconnected");
 }

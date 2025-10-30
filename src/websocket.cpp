@@ -23,41 +23,43 @@ void initializeWifi(char ssid[], char pass[], int status)
 }
 
 String parseMessage(WebSocketClient& client) {
-    String prefix = "WebClient_56FC703ACE1A";
-    String message = client.readString();
-    message.trim();
-
-    // Filter out non-printable characters (protects from binary garbage)
-    String filtered = "";
-    for (int i = 0; i < message.length(); i++) {
-        if (isPrintable(message[i])) {
-            filtered += message[i];
-        }
-    }
+    const String MY_ID      = "WebClient_F79721857DC5";
+    const String PARTNER_ID = "56FC703ACE1A";
     
-    if (filtered.startsWith(prefix)) {
-        // Find the dot position
-        int dotIndex = filtered.indexOf('.');
-        
+    // Read and clean incoming message
+    String raw = client.readString();
+    raw.trim();
+    String message = "";
+    for (char c : raw) {
+        if (isPrintable(c)) message += c;
+    }
+
+    // Only process messages from *either* known bot IDs
+    if (message.startsWith(PARTNER_ID)) {
+        int dotIndex = message.indexOf('.');
         if (dotIndex != -1) {
-            // Extract everything after the dot
-            filtered = "Other Bot: " + filtered.substring(dotIndex + 1);
-            Serial.println(filtered); 
+            String content = message.substring(dotIndex + 1);
+            Serial.println("Received from partner: " + content);
+            return "PARTNER:" + content;
+        }
+    } 
+    else if (message.startsWith(MY_ID)) {
+        int dotIndex = message.indexOf('.');
+        if (dotIndex != -1) {
+            String content = message.substring(dotIndex + 1);
+            Serial.println("Received from self: " + content);
+            return "SELF:" + content;
         }
     }
-    return filtered;
+
+    // Ignore all other sources
+    return "";
 }
 
 int parseState(String message)
 {
     char lastChar = ' ';
-    Serial.println(message);
-
-    if (message.indexOf("WebClient_F79721857DC5") == -1) return -1;
-    if (message.length() == 0) return -1;
-
     lastChar = message.charAt(message.length() - 1);
     int newState = lastChar - '0';
     return newState;
-}
-
+}   
