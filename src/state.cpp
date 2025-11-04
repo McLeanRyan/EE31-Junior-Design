@@ -1,3 +1,11 @@
+/*
+ *  state.cpp
+ *  Hoang Mai
+ *  10/02/2025
+ *
+ *
+ *  State Machine Logic Implementations 
+ */
 #include "motorcontrol.h"
 #include "state.h"
 
