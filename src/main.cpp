@@ -91,11 +91,15 @@ void loop() {
             /* Read Message Constantly from the Server, only from our bot / DEI */
             String parsed = parseMessage(client);
             String command;
+
+            /* Parse Message from Websocket depending on who sent it */
             if (parsed.startsWith("PARTNER:")) {
                 command = parsed.substring(8); // strip "PARTNER:"
             } else if (parsed.startsWith("SELF:")) {
                 command = parsed.substring(5);
             }
+            
+            /* Implement the State Logic */
             int newState   = parseState(command);
             if (newState >= STOP && newState <= TurnLeft) {
                 state = (States) newState;

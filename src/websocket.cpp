@@ -9,6 +9,11 @@
 #include "websocket.h"
 #include <WiFiNINA.h>
 
+/*  initializeWifi
+    Description:    Initialize connecting to the wifi
+    Input:          Wifi Name, Password, Connection Status
+    Output:         None
+*/
 void initializeWifi(char ssid[], char pass[], int status)
 {
     Serial.begin(9600);
@@ -22,11 +27,16 @@ void initializeWifi(char ssid[], char pass[], int status)
     Serial.print("Done\n");
 }
 
+/*  parseMessage
+    Description:    Only Read the Messages sent from our Bot and Partner's Bot
+    Input:          Client Object
+    Output:         The message after parsing
+*/
 String parseMessage(WebSocketClient& client) {
     const String MY_ID      = "WebClient_F79721857DC5";
     const String PARTNER_ID = "56FC703ACE1A";
     
-    // Read and clean incoming message
+    /* Increment only readable characters from the websocket */
     String raw = client.readString();
     raw.trim();
     String message = "";
@@ -34,7 +44,7 @@ String parseMessage(WebSocketClient& client) {
         if (isPrintable(c)) message += c;
     }
 
-    // Only process messages from *either* known bot IDs
+    /* Only process messages from *either* known bot IDs */
     if (message.startsWith(PARTNER_ID)) {
         int dotIndex = message.indexOf('.');
         if (dotIndex != -1) {
@@ -42,8 +52,7 @@ String parseMessage(WebSocketClient& client) {
             Serial.println("Received from partner: " + content);
             return "PARTNER:" + content;
         }
-    } 
-    else if (message.startsWith(MY_ID)) {
+    } else if (message.startsWith(MY_ID)) {
         int dotIndex = message.indexOf('.');
         if (dotIndex != -1) {
             String content = message.substring(dotIndex + 1);
@@ -56,6 +65,11 @@ String parseMessage(WebSocketClient& client) {
     return "";
 }
 
+/*  parseState
+    Description:    Read the State from a given message from the Server
+    Input:          Message Read in
+    Output:         Integer of State
+*/
 int parseState(String message)
 {
     char lastChar = ' ';

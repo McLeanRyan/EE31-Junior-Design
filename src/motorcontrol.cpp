@@ -17,45 +17,6 @@
 #define RIGHT_CC 4
 #define RIGHT_CW 5
 
-<<<<<<< Updated upstream
-=======
-void handleState(Motor& motor, States state) {
-    switch (state) {
-        case STOP:
-            motor.stop();
-            break;
-
-        case FORWARD:
-            motor.driveForward(200);      
-            break;
-
-        case BACKWARD:
-            motor.driveBackward(200);
-            break;
-
-        case PivotClockwise:
-            motor.pivotCW();            
-            break;
-
-        case PivotCounterClockwise:
-            motor.pivotCCW();
-            break;
-
-        case TurnRight:
-            motor.rightTurn(150);
-            break;
-
-        case TurnLeft:
-            motor.leftTurn(150);
-            break;
-
-        default:
-            motor.stop();
-            break;
-    }
-}
-
->>>>>>> Stashed changes
 /*  Motor
     Description: Motor Constructor that enables the coresponding pins
 */
@@ -153,7 +114,7 @@ void Motor::pivotCW()
 /* turnRight
    Description: Turns the bot to the right with a given turnRadius factor
 */
-void Motor::turnLeft(int turnRadius) {
+void Motor::leftTurn(int turnRadius) {
     // turnRadius can control duration — tweak this experimentally
     int outerSpeed = 150;   // right wheel goes slower (inner wheel)
     int innerSpeed = 100;
@@ -176,7 +137,7 @@ void Motor::turnLeft(int turnRadius) {
 /* turnLeft
    Description: Turns the bot to the left with a given turnRadius factor
 */
-void Motor::turnRight(int turnRadius) {
+void Motor::rightTurn(int turnRadius) {
     int outerSpeed = 150;
     int innerSpeed = 100;
 
