@@ -30,11 +30,11 @@ void handleState(Motor &motor, States state)
             break;
 
         case TurnRight:
-            motor.turnRight(150);
+            motor.rightTurn(150);
             break;
 
         case TurnLeft:
-            motor.turnLeft(150);
+            motor.leftTurn(150);
             break;
 
         default:

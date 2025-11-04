@@ -34,7 +34,6 @@ String parseMessage(WebSocketClient& client) {
         if (isPrintable(c)) message += c;
     }
 
-<<<<<<< Updated upstream
     // Only process messages from *either* known bot IDs
     if (message.startsWith(PARTNER_ID)) {
         int dotIndex = message.indexOf('.');
@@ -55,30 +54,6 @@ String parseMessage(WebSocketClient& client) {
 
     // Ignore all other sources
     return "";
-=======
-    String otherBot = "56FC703ACE1A_7210";
-    String ourBot   = "WebClient_F79721857DC5";
-
-    // Filter out non-printable characters (protects from binary garbage)
-    String filtered = "";
-    for (int i = 0; i < message.length(); i++) {
-        if (isPrintable(message[i])) {
-            filtered += message[i];
-        }
-    }
-
-    /* Parse other bot's message */
-    if (message.startsWith(otherBot)) {
-       int dotIndex = message.indexOf('.');
-       if (dotIndex != -1) {
-            // Extract everything after the dot
-            filtered = "Other Bot" + message.substring(dotIndex + 1);
-            Serial.println(filtered);
-        }
-    }
-
-    return filtered;
->>>>>>> Stashed changes
 }
 
 int parseState(String message)
