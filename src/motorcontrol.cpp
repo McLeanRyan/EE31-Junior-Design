@@ -17,6 +17,45 @@
 #define RIGHT_CC 4
 #define RIGHT_CW 5
 
+<<<<<<< Updated upstream
+=======
+void handleState(Motor& motor, States state) {
+    switch (state) {
+        case STOP:
+            motor.stop();
+            break;
+
+        case FORWARD:
+            motor.driveForward(200);      
+            break;
+
+        case BACKWARD:
+            motor.driveBackward(200);
+            break;
+
+        case PivotClockwise:
+            motor.pivotCW();            
+            break;
+
+        case PivotCounterClockwise:
+            motor.pivotCCW();
+            break;
+
+        case TurnRight:
+            motor.rightTurn(150);
+            break;
+
+        case TurnLeft:
+            motor.leftTurn(150);
+            break;
+
+        default:
+            motor.stop();
+            break;
+    }
+}
+
+>>>>>>> Stashed changes
 /*  Motor
     Description: Motor Constructor that enables the coresponding pins
 */

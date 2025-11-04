@@ -21,8 +21,8 @@ public:
     void driveBackward(int speed);
     void pivotCW();
     void pivotCCW();
-    void turnRight(int turnRadius);
-    void turnLeft(int turnRadius);
+    void rightTurn(int turnRadius);
+    void leftTurn(int turnRadius);
 
 private:
 };
