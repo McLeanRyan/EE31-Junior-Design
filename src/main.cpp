@@ -4,6 +4,7 @@
 #include "websocket.h"
 #include "motorcontrol.h"
 #include "state.h"
+#include "colorDetect.h"
 
 /////// you can enter your sensitive data in the Secret tab/arduino_secrets.h
 /////// WiFi Settings ///////
@@ -30,6 +31,8 @@ void setup() {
     pinMode(A0, INPUT_PULLUP);
 
     attachInterrupt(digitalPinToInterrupt(A0), handleButtonInterrupt, FALLING);
+
+    colorDetectSetup();
 
     initializeWifi(ssid, pass, status);
 }

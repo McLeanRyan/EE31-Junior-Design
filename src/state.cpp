@@ -1,12 +1,13 @@
 #include "motorcontrol.h"
 #include "state.h"
+#include "linefollow.h"
 
 void nextState(States state) 
 {
   state = static_cast<States>((static_cast<int>(state) + 1) % 7);
 }
 
-void handleState(Motor &motor, States state)
+void handleState(Motor &motor, States state, LineFollow lineFollow)
 {
     switch (state) {
         case STOP:
@@ -35,6 +36,13 @@ void handleState(Motor &motor, States state)
 
         case TurnLeft:
             motor.turnLeft(150);
+            break;
+
+        case FollowLeft:
+            lineFollow.followLeft(motor, 1);
+            break;
+        case FollowRight:
+            lineFollow.followRight(motor, 1);
             break;
 
         default:

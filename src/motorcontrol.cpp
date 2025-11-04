@@ -156,5 +156,19 @@ void Motor::turnRight(int turnRadius) {
     stop();
 }
 
+/* tankDrive
+   Description: Drive each wheel forward with individual speed
+*/
+void Motor::tankDrive(int speedLeft, int speedRight) {
+    // Both wheels moving forward
+    digitalWrite(LEFT_CW, HIGH);
+    digitalWrite(LEFT_CC, LOW);
+    digitalWrite(RIGHT_CW, HIGH);
+    digitalWrite(RIGHT_CC, LOW);
+
+    analogWrite(LEFT_ENABLE, speedLeft);
+    analogWrite(RIGHT_ENABLE, speedRight);
+}
+
 
 

@@ -23,6 +23,7 @@ public:
     void pivotCCW();
     void turnRight(int turnRadius);
     void turnLeft(int turnRadius);
+    void tankDrive(int speedLeft, int speedRight);
 
 private:
 };
