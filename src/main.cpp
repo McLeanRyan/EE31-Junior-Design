@@ -101,15 +101,6 @@ void loop() {
                 state = (States) newState;
                 Serial.print("Server set state to: ");
                 Serial.println(state);
-<<<<<<< Updated upstream
-=======
-
-                client.beginMessage(TYPE_TEXT);
-                client.print("state updated to ");
-                client.print(state);
-                client.endMessage();
-                Serial.println("sent to server");
->>>>>>> Stashed changes
             }
         }
         handleState(motor, state);
