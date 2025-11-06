@@ -5,6 +5,7 @@
 #include "motorcontrol.h"
 #include "state.h"
 #include "colorDetect.h"
+#include "linefollow.h"
 
 /////// you can enter your sensitive data in the Secret tab/arduino_secrets.h
 /////// WiFi Settings ///////
@@ -17,6 +18,7 @@ WiFiClient wifi;
 WebSocketClient client = WebSocketClient(wifi, serverAddress, port);
 String clientID = CLIENT_ID; //Insert your Server ID Here!
 int status = WL_IDLE_STATUS;
+LineFollow lineFollow;
 
 volatile bool buttonPressed = false;  // set in ISR
 States state = STOP;
@@ -44,6 +46,11 @@ Motor motor;
 void loop() {
     delay(100);
 
+    while(true){
+        state = (States) FollowLeft;
+        handleState(motor, state, lineFollow); 
+    }
+
     if (!client.connected()) {
         client.begin();
         delay(100);
@@ -51,7 +58,7 @@ void loop() {
         client.print(clientID);
         client.endMessage();
     }
-    
+
     while (client.connected()) {
         int messageSize = client.parseMessage();
         if (messageSize > 0) {
@@ -62,7 +69,7 @@ void loop() {
             int newState   = parseState(message);
             Serial.println(newState);
             if (newState >= STOP && newState <= TurnLeft) {
-                state = (States) newState;
+                state = (States) FollowLeft;
                 Serial.print("Server set state to: ");
                 Serial.println(state);
 
@@ -100,7 +107,7 @@ void loop() {
         //     delay(250);
         // }
 
-        handleState(motor, state);
+        handleState(motor, state, lineFollow);
     }
 
     Serial.println("disconnected");

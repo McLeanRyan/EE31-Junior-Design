@@ -3,18 +3,12 @@
 #include "colordetect.h"
 #include <ArduinoHttpClient.h>
 
-LineFollow::LineFollow() {
-
-}
-
-
 /* followLeft
    Inputs: Motor 
    This function follows a line on the left edge, meaning the colored line is
    to the right of the robot.
 */
 void LineFollow::followLeft(Motor& motor, int lineColor) {
-    int targetColor = 1; // Blue
     int currentStateColor = 0;
     int currentColor = 0; // Equal to result of color sensor reading w/ some time average (over 3 reads?)
     int colorFeedback = 0;    
@@ -38,12 +32,12 @@ void LineFollow::followLeft(Motor& motor, int lineColor) {
             }
             colorFeedback++; 
             delay(50);
-        } else if (currentColor == targetColor){
+        } else if (currentColor == lineColor){
             motor.stop();
 
             //Swap Target and Current
-            int tempColor = targetColor;
-            targetColor = currentStateColor;
+            int tempColor = lineColor;
+            lineColor = currentStateColor;
             currentStateColor = tempColor;
             colorFeedback = 0;
         } else {
