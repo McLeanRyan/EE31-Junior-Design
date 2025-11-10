@@ -1,5 +1,6 @@
 #include "motorcontrol.h"
 #include "state.h"
+#include "irDetect.h"
 
 void nextState(States state) 
 {
@@ -35,6 +36,12 @@ void handleState(Motor &motor, States state)
 
         case TurnLeft:
             motor.turnLeft(150);
+            break;
+
+        case CollisionAvoidance:
+            motor.driveForward(200);
+            while (!detectDistance(-600)) {}
+            motor.stop();
             break;
 
         default:

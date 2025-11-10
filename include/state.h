@@ -1,6 +1,7 @@
 #ifndef STATES_H
 #define STATES_H
 #include "motorcontrol.h"
+#include "irDetect.h"
 
 // Define your shared state machine enum here
 enum States {
@@ -10,7 +11,8 @@ enum States {
     PivotClockwise,
     PivotCounterClockwise,
     TurnRight,
-    TurnLeft
+    TurnLeft,
+    CollisionAvoidance
 };
 
 class Motor;

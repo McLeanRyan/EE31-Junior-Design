@@ -5,6 +5,7 @@
 #include "motorcontrol.h"
 #include "state.h"
 #include "colorDetect.h"
+#include "irDetect.h"
 
 /////// you can enter your sensitive data in the Secret tab/arduino_secrets.h
 /////// WiFi Settings ///////
@@ -33,6 +34,7 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(A0), handleButtonInterrupt, FALLING);
 
     colorDetectSetup();
+    irDetectSetup(100);
 
     initializeWifi(ssid, pass, status);
 }
@@ -43,6 +45,12 @@ Motor motor;
 
 void loop() {
     delay(100);
+
+    //testing loop
+    while(true){
+        state = (States) CollisionAvoidance;
+        handleState(motor, state); 
+    }
 
     if (!client.connected()) {
         client.begin();
