@@ -1,6 +1,7 @@
 #include "motorcontrol.h"
 #include "state.h"
 #include "linefollow.h"
+#include "colorDetect.h"
 
 void nextState(States state) 
 {
@@ -39,10 +40,10 @@ void handleState(Motor &motor, States state, LineFollow lineFollow)
             break;
 
         case FollowLeft:
-            lineFollow.followLeft(motor, 1);
+            lineFollow.followLeft(motor, COLOR_BLUE);
             break;
         case FollowRight:
-            lineFollow.followRight(motor, 1);
+            lineFollow.followRight(motor, COLOR_BLUE);
             break;
 
         default:
