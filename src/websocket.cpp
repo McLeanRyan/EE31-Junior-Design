@@ -65,6 +65,37 @@ String parseMessage(WebSocketClient& client) {
     return "";
 }
 
+String joshParseMessage(WebSocketClient &client)
+{
+    const String PARTNERBOT_ID = "56FC703ACE1A_9664";
+    const String MY_ID = "Chroma";
+
+    String raw = client.readString();
+    raw.trim();
+    String message = "";
+    for (char c : raw) {
+        if (isPrintable(c)) message += c;
+    }
+
+
+    /* Only process messages from *either* known bot IDs */
+    if (message.startsWith(PARTNERBOT_ID)) {
+        int dotIndex = message.indexOf(',');
+        if (dotIndex != -1) {
+            String content = message.substring(dotIndex + 1);
+            Serial.println("Received from partner: " + content);
+            return "PARTNER:" + content;
+        }
+    } else if (message.startsWith(MY_ID)) {
+        int dotIndex = message.indexOf('.');
+        if (dotIndex != -1) {
+            String content = message.substring(dotIndex + 1);
+            Serial.println("Received from self: " + content);
+            return "SELF:" + content;
+        }
+    }
+}
+
 /*  parseState
     Description:    Read the State from a given message from the Server
     Input:          Message Read in

@@ -5,6 +5,7 @@
 
 void initializeWifi(char ssid[], char pass[], int status);
 String parseMessage(WebSocketClient &client);
+String joshParseMessage(WebSocketClient &client);
 int parseState(String message);
 
 #endif

@@ -6,6 +6,9 @@
 #include "state.h"
 #include "colorDetect.h"
 
+/* SERVER CONFIGURATION */
+// wscat -c ws://10.5.12.14
+
 /////// you can enter your sensitive data in the Secret tab/arduino_secrets.h
 /////// WiFi Settings ///////
 char ssid[] = WIFI_NAME;
@@ -52,9 +55,11 @@ Motor motor;
 void remoteCommanBotMotionsWithPartner() {
     while (client.connected()) {
         if (client.parseMessage() > 0) {
-            String parsed = parseMessage(client);
-            
+
+            String parsed = joshParseMessage(client);
+            Serial.println(parsed);
             if (parsed.startsWith("PARTNER:")) {
+
                 String command = parsed.substring(8); // strip "PARTNER:"
                 if (command == "State: 1") {
                     handleState(motor, (States) 1);
@@ -92,23 +97,24 @@ void loop() {
     while (client.connected()) {
         if (client.parseMessage() > 0) {
             /* Read Message Constantly from the Server, only from our bot / DEI */
-            String parsed = parseMessage(client);
+            String parsed = joshParseMessage(client);
+            Serial.println(parsed);
             String command;
 
-            /* Parse Message from Websocket depending on who sent it */
-            if (parsed.startsWith("PARTNER:")) {
-                command = parsed.substring(8); // strip "PARTNER:"
-            } else if (parsed.startsWith("SELF:")) {
-                command = parsed.substring(5);
-            }
+            // /* Parse Message from Websocket depending on who sent it */
+            // if (parsed.startsWith("PARTNER:")) {
+            //     command = parsed.substring(8); // strip "PARTNER:"
+            // } else if (parsed.startsWith("SELF:")) {
+            //     command = parsed.substring(5);
+            // }
             
-            /* Implement the State Logic */
-            int newState   = parseState(command);
-            if (newState >= STOP && newState <= TurnLeft) {
-                state = (States) newState;
-                Serial.print("Server set state to: ");
-                Serial.println(state);
-            }
+            // /* Implement the State Logic */
+            // int newState   = parseState(command);
+            // if (newState >= STOP && newState <= TurnLeft) {
+            //     state = (States) newState;
+            //     Serial.print("Server set state to: ");
+            //     Serial.println(state);
+            // }
         }
         handleState(motor, state);
     }
