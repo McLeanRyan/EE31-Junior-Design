@@ -77,7 +77,6 @@ String joshParseMessage(WebSocketClient &client)
         if (isPrintable(c)) message += c;
     }
 
-
     /* Only process messages from *either* known bot IDs */
     if (message.startsWith(PARTNERBOT_ID)) {
         int dotIndex = message.indexOf(',');

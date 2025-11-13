@@ -98,8 +98,11 @@ void loop() {
         if (client.parseMessage() > 0) {
             /* Read Message Constantly from the Server, only from our bot / DEI */
             String parsed = joshParseMessage(client);
-            Serial.println(parsed);
             String command;
+
+            client.beginMessage(TYPE_TEXT);
+            client.println("Received message: " + parsed);
+            client.endMessage();
 
             // /* Parse Message from Websocket depending on who sent it */
             // if (parsed.startsWith("PARTNER:")) {
