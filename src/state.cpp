@@ -42,6 +42,7 @@ void handleState(Motor &motor, States state, LineFollow lineFollow)
         case FollowLeft:
             lineFollow.followLeft(motor, COLOR_BLUE);
             break;
+            
         case FollowRight:
             lineFollow.followRight(motor, COLOR_BLUE);
             break;

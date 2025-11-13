@@ -39,6 +39,32 @@ void LineFollow::followLeft(Motor& motor, int lineColor) {
 }
 
 void LineFollow::followRight(Motor& motor, int lineColor) {
-    // Update once followLeft has been tested and works
+    int currentStateColor = 0;
+    int currentColor = 0; // Equal to result of color sensor reading w/ some time average (over 3 reads?)
+    int colorFeedback = 0;    
+    int baseSpeed = 100; 
+    int kLine = 0.1; // Feedback coefficient
+    // Line Following Control
+    while (true) { // In future, replace with distance sensor instead of true
+        currentColor = detectColorClass(50);
+        if (currentColor == currentStateColor) {
+            if (currentColor == lineColor) {
+                motor.tankDrive(baseSpeed + (kLine * colorFeedback), 0);
+            } else {
+                motor.tankDrive(0, baseSpeed + (kLine * colorFeedback));
+            }
+            colorFeedback++; 
+        } else if (currentColor == lineColor){
+
+            //Swap Target and Current
+            int tempColor = lineColor;
+            lineColor = currentStateColor;
+            currentStateColor = tempColor;
+            colorFeedback = 0;
+        } else {
+            // motor.stop();
+            return;
+        }
+    }
 }
 
