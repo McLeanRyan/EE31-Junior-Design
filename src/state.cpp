@@ -39,8 +39,9 @@ void handleState(Motor &motor, States state)
             break;
 
         case CollisionAvoidance:
+            if (detectDistance(-500)) break;
             motor.driveForward(200);
-            while (!detectDistance(-600)) {}
+            while (!detectDistance(-500)) {}
             motor.stop();
             break;
 
