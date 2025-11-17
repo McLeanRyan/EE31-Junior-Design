@@ -12,7 +12,15 @@ enum States {
     TurnRight,
     TurnLeft,
     FollowLeft,
-    FollowRight
+    FollowRight,
+    
+    // Color-specific states
+    FollowLeftBlue,
+    FollowRightBlue,
+    FollowLeftYellow,
+    FollowRightYellow,
+    FollowLeftRed,
+    FollowRightRed
 };
 
 class Motor;

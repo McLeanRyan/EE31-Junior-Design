@@ -39,11 +39,30 @@ void handleState(Motor &motor, States state, LineFollow lineFollow)
             motor.turnLeft(150);
             break;
 
-        case FollowLeft:
+            case FollowLeft:
             lineFollow.followLeft(motor, COLOR_BLUE);
             break;
         case FollowRight:
             lineFollow.followRight(motor, COLOR_BLUE);
+            break;
+
+        case FollowLeftBlue:
+            lineFollow.followLeft(motor, COLOR_BLUE);
+            break;
+        case FollowRightBlue:
+            lineFollow.followRight(motor, COLOR_BLUE);
+            break;
+        case FollowLeftYellow:
+            lineFollow.followLeft(motor, COLOR_YELLOW);
+            break;
+        case FollowRightYellow:
+            lineFollow.followRight(motor, COLOR_YELLOW);
+            break;
+        case FollowLeftRed:
+            lineFollow.followLeft(motor, COLOR_RED);
+            break;
+        case FollowRightRed:
+            lineFollow.followRight(motor, COLOR_RED);
             break;
 
         default:

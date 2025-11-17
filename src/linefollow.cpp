@@ -1,6 +1,6 @@
 #include "motorcontrol.h"
 #include "linefollow.h"
-#include "colordetect.h"
+#include "colorDetect.h"
 #include <ArduinoHttpClient.h>
 
 /* followLeft
@@ -39,6 +39,30 @@ void LineFollow::followLeft(Motor& motor, int lineColor) {
 }
 
 void LineFollow::followRight(Motor& motor, int lineColor) {
-    // Update once followLeft has been tested and works
+    int currentStateColor = 0;
+    int currentColor = 0;
+    int colorFeedback = 0;
+    int baseSpeed = 100;
+    int kLine = 0.1; // Feedback coefficient
+
+    while (true) {
+        currentColor = detectColorClass(50);
+        if (currentColor == currentStateColor) {
+            if (currentColor == 0) {
+                // Mirror of followLeft: drive right wheel when on same side
+                motor.tankDrive(0, baseSpeed + (kLine * colorFeedback));
+            } else {
+                motor.tankDrive(baseSpeed + (kLine * colorFeedback), 0);
+            }
+            colorFeedback++;
+        } else if (currentColor == lineColor) {
+            int tempColor = lineColor;
+            lineColor = currentStateColor;
+            currentStateColor = tempColor;
+            colorFeedback = 0;
+        } else {
+            return;
+        }
+    }
 }
 
