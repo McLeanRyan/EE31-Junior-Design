@@ -14,14 +14,15 @@
     Input:          Wifi Name, Password, Connection Status
     Output:         None
 */
-void initializeWifi(char ssid[], char pass[], int status)
+void initializeWifi(char ssid[], char pass[])
 {
     Serial.begin(9600);
-    while ( status != WL_CONNECTED) {
-        Serial.print("Attempting to connect to Network named: ");
-        Serial.println(ssid); // print the network name (SSID);
+    int status = WL_IDLE_STATUS;
 
-        // Connect to WPA/WPA2 network:
+    while (status != WL_CONNECTED) {
+        Serial.print("Attempting to connect to Network named: ");
+
+        Serial.println(ssid);                   
         status = WiFi.begin(ssid, pass);
     }
     Serial.print("Done\n");
@@ -67,7 +68,7 @@ String parseMessage(WebSocketClient& client) {
 
 String joshParseMessage(WebSocketClient &client)
 {
-    const String PARTNERBOT_ID = "56FC703ACE1A_9664";
+    const String PARTNERBOT_ID = "56FC703ACE1A";
     const String MY_ID = "Chroma";
 
     String raw = client.readString();
@@ -86,13 +87,15 @@ String joshParseMessage(WebSocketClient &client)
             return "PARTNER:" + content;
         }
     } else if (message.startsWith(MY_ID)) {
-        int dotIndex = message.indexOf('.');
+        int dotIndex = message.indexOf(',');
         if (dotIndex != -1) {
             String content = message.substring(dotIndex + 1);
             Serial.println("Received from self: " + content);
             return "SELF:" + content;
         }
     }
+
+    return "";
 }
 
 /*  parseState

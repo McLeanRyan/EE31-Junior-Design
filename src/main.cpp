@@ -19,7 +19,6 @@ int port = 80;
 WiFiClient wifi;
 WebSocketClient client = WebSocketClient(wifi, serverAddress, port);
 String clientID = CLIENT_ID; //Insert your Server ID Here!
-int status = WL_IDLE_STATUS;
 
 volatile bool buttonPressed = false;  // set in ISR
 States state = STOP;
@@ -37,7 +36,7 @@ void setup() {
 
     colorDetectSetup();
 
-    initializeWifi(ssid, pass, status);
+    initializeWifi(ssid, pass);
 }
 
 int current_blue, current_yellow, current_red, current_class = 0;
@@ -91,18 +90,19 @@ void loop() {
         client.print(clientID);
         client.endMessage();
     }
-
-    //remoteCommanBotMotionsWithPartner();
     
     while (client.connected()) {
+        delay(100);
         if (client.parseMessage() > 0) {
             /* Read Message Constantly from the Server, only from our bot / DEI */
             String parsed = joshParseMessage(client);
             String command;
 
-            client.beginMessage(TYPE_TEXT);
-            client.println("Received message: " + parsed);
-            client.endMessage();
+            if (parsed != "") {
+                client.beginMessage(TYPE_TEXT);
+                client.println(parsed + " Hoang Mai");
+                client.endMessage();    
+            }
 
             // /* Parse Message from Websocket depending on who sent it */
             // if (parsed.startsWith("PARTNER:")) {
