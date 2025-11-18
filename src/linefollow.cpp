@@ -46,7 +46,7 @@ void LineFollow::followRight(Motor& motor, int lineColor, WebSocketClient &clien
     }
 }
 
-void LineFollow::followLeft(Motor& motor, int lineColor) {
+void LineFollow::followLeft(Motor& motor, int lineColor, WebSocketClient &client) {
     int currentStateColor = 0;
     int currentColor = 0; // Equal to result of color sensor reading w/ some time average (over 3 reads?)
     int colorFeedback = 0;    

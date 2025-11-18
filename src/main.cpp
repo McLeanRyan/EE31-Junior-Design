@@ -90,14 +90,16 @@ void loop() {
     if (!client.connected()) {
         client.begin();
         delay(100);
+        Serial.println("Connecting");
         client.beginMessage(TYPE_TEXT);
         client.print(clientID);
         client.endMessage();
     }
 
     while(true) {
+        Serial.println("Following Left");
         state = (States) FollowLeft;
-        handleState(motor, state, lineFollow); 
+        handleState(motor, state, lineFollow, client); 
     }
     
     while (client.connected()) {

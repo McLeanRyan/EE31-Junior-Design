@@ -114,7 +114,7 @@ void Motor::pivotCW()
 /* turnRight
    Description: Turns the bot to the right with a given turnRadius factor
 */
-void Motor::leftTurn(int turnRadius) {
+void Motor::turnLeft(int turnRadius) {
     // turnRadius can control duration — tweak this experimentally
     int outerSpeed = 150;   // right wheel goes slower (inner wheel)
     int innerSpeed = 100;
@@ -137,7 +137,7 @@ void Motor::leftTurn(int turnRadius) {
 /* turnLeft
    Description: Turns the bot to the left with a given turnRadius factor
 */
-void Motor::rightTurn(int turnRadius) {
+void Motor::turnRight(int turnRadius) {
     int outerSpeed = 150;
     int innerSpeed = 100;
 
@@ -154,6 +154,20 @@ void Motor::rightTurn(int turnRadius) {
     delay(duration);
 
     stop();
+}
+
+/* tankDrive
+   Description: Drive each wheel forward with individual speed
+*/
+void Motor::tankDrive(int speedLeft, int speedRight) {
+    // Both wheels moving forward
+    digitalWrite(LEFT_CW, HIGH);
+    digitalWrite(LEFT_CC, LOW);
+    digitalWrite(RIGHT_CW, HIGH);
+    digitalWrite(RIGHT_CC, LOW);
+
+    analogWrite(LEFT_ENABLE, speedLeft);
+    analogWrite(RIGHT_ENABLE, speedRight);
 }
 
 
