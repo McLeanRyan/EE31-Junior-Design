@@ -62,9 +62,9 @@ void remoteCommanBotMotionsWithPartner() {
 
                 String command = parsed.substring(8); // strip "PARTNER:"
                 if (command == "State: 1") {
-                    handleState(motor, (States) 1);
-                    delay(5000);
-                    handleState(motor, (States) 0 );
+                    // handleState(motor, (States) 1);
+                    // delay(5000);
+                    // handleState(motor, (States) 0 );
 
                     /* Flash LED*/
                     digitalWrite(LED_BUILTIN, HIGH);
@@ -80,6 +80,8 @@ void remoteCommanBotMotionsWithPartner() {
         }
     }
 }
+
+LineFollow lineFollow; 
 
 void loop() {
     
@@ -126,7 +128,7 @@ void loop() {
             //     Serial.println(state);
             // }
         }
-        handleState(motor, state);
+        //handleState(motor, state);
     }
 
     Serial.println("disconnected");
