@@ -54,25 +54,41 @@ void LineFollow::followLeft(Motor& motor, int lineColor, WebSocketClient &client
     int kLine = 1; // Feedback coefficient
     // Line Following Control
     while (true) { // In future, replace with distance sensor instead of true
-        currentColor = detectColorClass(25);
-        if (currentColor == currentStateColor) {
-            if (currentColor == 0) {
-                motor.tankDrive(0, baseSpeed + (kLine * colorFeedback));
-            } else {
-                motor.tankDrive(baseSpeed + (kLine * colorFeedback), 0);
-            }
-            colorFeedback++; 
-        } else if (currentColor == lineColor){
+        currentColor = detectColorClass(50);
 
-            //Swap Target and Current
-            int tempColor = lineColor;
-            lineColor = currentStateColor;
-            currentStateColor = tempColor;
-            colorFeedback = 0;
-        } else {
-            // motor.stop();
-            return;
+        /* Print Current Color */
+        client.beginMessage(TYPE_TEXT);
+
+        if (currentColor == 0){
+            client.println("Current Color Reading is Black " );
+        } else if (currentColor == 1) {
+            client.println("Current Color Reading is Blue " );
+        } else if (currentColor == 2) {
+            client.println("Current Color Reading is Yellow " );
+        } else if (currentColor == 3) {
+            client.println("Current Color Reading is Red " );
         }
+        client.endMessage();
+        delay(1000);
+
+        // if (currentColor == currentStateColor) {
+        //     if (currentColor == 0) {
+        //         motor.tankDrive(0, baseSpeed + (kLine * colorFeedback));
+        //     } else {
+        //         motor.tankDrive(baseSpeed + (kLine * colorFeedback), 0);
+        //     }
+        //     colorFeedback++; 
+        // } else if (currentColor == lineColor){
+
+        //     //Swap Target and Current
+        //     int tempColor = lineColor;
+        //     lineColor = currentStateColor;
+        //     currentStateColor = tempColor;
+        //     colorFeedback = 0;
+        // } else {
+        //     // motor.stop();
+        //     return;
+        // }
     }
 }
 

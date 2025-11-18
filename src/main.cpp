@@ -97,7 +97,6 @@ void loop() {
     }
 
     while(true) {
-        Serial.println("Following Left");
         state = (States) FollowLeft;
         handleState(motor, state, lineFollow, client); 
     }

@@ -1,5 +1,6 @@
 /*
  *  colorDetect.cpp
+ *  Romil Shah
  *  10/30/2025
  *
  *
@@ -66,6 +67,8 @@ int detectColorClass(int delayMs)
 
     return calculateClass(current_blue, current_yellow, current_red);
 }
+
+
 int calculateClass(int blue1, int yellow1, int red1) {
     int distance = 1000000;
     int temp_distance = 0;
