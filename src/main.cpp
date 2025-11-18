@@ -5,6 +5,7 @@
 #include "motorcontrol.h"
 #include "state.h"
 #include "colorDetect.h"
+#include "linefollow.h"
 
 /* SERVER CONFIGURATION */
 // wscat -c ws://10.5.12.14
@@ -90,6 +91,11 @@ void loop() {
         client.beginMessage(TYPE_TEXT);
         client.print(clientID);
         client.endMessage();
+    }
+
+    while(true) {
+        state = (States) FollowLeft;
+        handleState(motor, state, lineFollow); 
     }
     
     while (client.connected()) {
