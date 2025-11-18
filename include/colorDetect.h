@@ -2,7 +2,6 @@
  *  colorDetect.h
  *  11/3/2025
  *
- *
  *  colorDetect.h will define the functionalities of the color detection
  */
 #ifndef COLOR_DETECT_H
