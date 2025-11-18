@@ -81,6 +81,7 @@ void remoteCommanBotMotionsWithPartner() {
 }
 
 void loop() {
+    
     delay(100);
 
     if (!client.connected()) {

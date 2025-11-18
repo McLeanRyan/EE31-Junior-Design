@@ -2,13 +2,14 @@
 #include "linefollow.h"
 #include "colordetect.h"
 #include <ArduinoHttpClient.h>
+#include <WiFiNINA.h>
 
 /* followLeft
    Inputs: Motor 
    This function follows a line on the left edge, meaning the colored line is
    to the right of the robot.
 */
-void LineFollow::followRight(Motor& motor, int lineColor) {
+void LineFollow::followRight(Motor& motor, int lineColor, WebSocketClient &client) {
     int currentStateColor = 0;
     int currentColor = 0; // Equal to result of color sensor reading w/ some time average (over 3 reads?)
     int colorFeedback = 0;    
@@ -17,6 +18,13 @@ void LineFollow::followRight(Motor& motor, int lineColor) {
     // Line Following Control
     while (true) { // In future, replace with distance sensor instead of true
         currentColor = detectColorClass(25);
+
+        /* Print Current Color */
+        client.beginMessage(TYPE_TEXT);
+        client.print(currentColor);
+        client.endMessage();
+
+
         if (currentColor == currentStateColor) {
             if (currentColor == 0) {
                 motor.tankDrive(baseSpeed + (kLine * colorFeedback), 0);
