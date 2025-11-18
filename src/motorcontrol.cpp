@@ -156,5 +156,35 @@ void Motor::rightTurn(int turnRadius) {
     stop();
 }
 
+void gyroDrive(int speed) 
+{
+    digitalWrite(LEFT_CW, HIGH);
+    digitalWrite(LEFT_CC, LOW);
+    digitalWrite(RIGHT_CW, HIGH);
+    digitalWrite(RIGHT_CC, LOW);
+
+    double kP = 1;
+    double kI = 0;
+    double kD = 0;
+
+    double target = 0; //REPLACE 0 WITH GYRO READING AT START
+    double totalError, previousError, changeError, PIDOut = 0;
+
+    for (int i = 0; i<1000; i++) {
+        double e = target - 0; // REPLACE 0 WITH CURRENT GYRO READING
+        totalError += e;
+        changeError = e - previousError;
+        PIDOut = (kP * e) + (kI * totalError) + (kD * changeError);
+        
+        if (e > 0) {
+            analogWrite(LEFT_ENABLE, speed + PIDOut);
+            analogWrite(RIGHT_ENABLE, speed - PIDOut);
+        }else if (e < 0){
+            analogWrite(LEFT_ENABLE, speed - PIDOut);
+            analogWrite(RIGHT_ENABLE, speed + PIDOut);
+        }
+        previousError = e;
+    }
+}
 
 
