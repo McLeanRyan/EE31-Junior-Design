@@ -10,12 +10,15 @@ enum States {
     PivotClockwise,
     PivotCounterClockwise,
     TurnRight,
-    TurnLeft
+    TurnLeft,
+    FollowLeft,
+    FollowRight
 };
 
 class Motor;
+class LineFollow;
 
 void nextState();
-void handleState(Motor& motor, States state);
+void handleState(Motor& motor, States state, LineFollow LineFollow);
 
 #endif
