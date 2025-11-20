@@ -8,6 +8,7 @@
  */
 #include "motorcontrol.h"
 #include <ArduinoHttpClient.h>
+#include "colordetect.h"
 
 #define LEFT_ENABLE 9
 #define LEFT_CC 7
@@ -17,10 +18,28 @@
 #define RIGHT_CC 4
 #define RIGHT_CW 5
 
+/**********************   HELPER FUNCTION DELETE   ***************************/
+void printColor(WebSocketClient &client, int currentColor) {
+    /* Print Current Color */
+    client.beginMessage(TYPE_TEXT);
+    if (currentColor == 0){
+        client.println("Current Color Reading is Black " );
+    } else if (currentColor == 1) {
+        client.println("Current Color Reading is Blue " );
+    } else if (currentColor == 2) {
+        client.println("Current Color Reading is Yellow " );
+    } else if (currentColor == 3) {
+        client.println("Current Color Reading is Red " );
+    }
+    client.endMessage();
+    delay(1000);
+}
+
 /*  Motor
     Description: Motor Constructor that enables the coresponding pins
 */
-Motor::Motor() {
+Motor::Motor() 
+{
     pinMode(LEFT_ENABLE, OUTPUT);
     pinMode(LEFT_CC, OUTPUT);
     pinMode(LEFT_CW, OUTPUT);
@@ -28,7 +47,6 @@ Motor::Motor() {
     pinMode(RIGHT_ENABLE, OUTPUT);
     pinMode(RIGHT_CC, OUTPUT);
     pinMode(RIGHT_CW, OUTPUT);
-
 }
 
 /*  driveForward
@@ -114,7 +132,8 @@ void Motor::pivotCW()
 /* turnRight
    Description: Turns the bot to the right with a given turnRadius factor
 */
-void Motor::turnLeft(int turnRadius) {
+void Motor::turnLeft(int turnRadius) 
+{
     // turnRadius can control duration — tweak this experimentally
     int outerSpeed = 150;   // right wheel goes slower (inner wheel)
     int innerSpeed = 100;
@@ -137,7 +156,8 @@ void Motor::turnLeft(int turnRadius) {
 /* turnLeft
    Description: Turns the bot to the left with a given turnRadius factor
 */
-void Motor::turnRight(int turnRadius) {
+void Motor::turnRight(int turnRadius) 
+{
     int outerSpeed = 150;
     int innerSpeed = 100;
 
@@ -159,7 +179,8 @@ void Motor::turnRight(int turnRadius) {
 /* tankDrive
    Description: Drive each wheel forward with individual speed
 */
-void Motor::tankDrive(int speedLeft, int speedRight) {
+void Motor::tankDrive(int speedLeft, int speedRight) 
+{
     // Both wheels moving forward
     digitalWrite(LEFT_CW, HIGH);
     digitalWrite(LEFT_CC, LOW);
@@ -170,5 +191,117 @@ void Motor::tankDrive(int speedLeft, int speedRight) {
     analogWrite(RIGHT_ENABLE, speedRight);
 }
 
+/* followLane
+   Inputs: Left/Right Edge, Motor, client for debugging
 
+   This function follows the line depending on which edge is inputted
+*/
+void Motor::followLane(Edge Side, int lineColor, WebSocketClient &client)
+{
+    int currentStateColor, currentColor, colorFeedback, boost = 0;
+    int baseSpeed = 100; 
+    int kLine = 1; // Feedback coefficient
 
+    /* Left and Right Boost Turns the Corrsponding wheel and stops other one */
+    int leftBoost  = (Side == RIGHT_EDGE ? 1 : 0);
+    int rightBoost = (Side == LEFT_EDGE  ? 1 : 0);
+
+    /* Line Following Control */
+    while (true) {
+        currentColor = detectColorClass(25);
+        printColor(client, currentColor);
+
+        if (currentColor == currentStateColor) {
+
+            /* Turn the Motor Faster */
+            boost = baseSpeed + kLine * colorFeedback;
+
+            /* rightBoost / leftBoost will be either 0 or 1, not both */
+            int rightPower = boost * rightBoost;
+            int leftPower  = boost * leftBoost;
+
+            tankDrive(leftPower, rightPower);
+            colorFeedback++;
+
+        } else if (currentColor == lineColor) {
+            /* Swap Target and Current */
+            int tempColor = lineColor;
+            lineColor = currentStateColor;
+            currentStateColor = tempColor;
+            colorFeedback = 0;
+        } else {
+            return;
+        }
+    }
+}
+
+/* followRight
+   Inputs: Motor 
+   This function follows a line on the right edge, meaning the colored line is
+   to the right of the robot.
+*/
+void Motor::followRight(int lineColor, WebSocketClient &client)
+{
+    int currentStateColor, currentColor, colorFeedback = 0;
+    int baseSpeed = 100; 
+    int kLine = 1; // Feedback coefficient
+
+    // Line Following Control
+    while (true) { // In future, replace with distance sensor instead of true
+        currentColor = detectColorClass(25);
+
+        printColor(client, currentColor);
+        /* Print Current Color */
+        if (currentColor == currentStateColor) {
+            if (currentColor == 0) {
+                tankDrive(baseSpeed + (kLine * colorFeedback), 0);
+            } else {
+                tankDrive(0, baseSpeed + (kLine * colorFeedback));
+            }
+            colorFeedback++; 
+        } else if (currentColor == lineColor) {
+            //Swap Target and Current
+            int tempColor = lineColor;
+            lineColor = currentStateColor;
+            currentStateColor = tempColor;
+            colorFeedback = 0;
+        } else {
+            return;
+        }
+    }
+}
+
+/* followLeft
+   Inputs: Motor, client for debugging
+   This function follows a line on the left edge, meaning the colored line is
+   to the left of the robot.
+*/
+void Motor::followLeft(int lineColor, WebSocketClient &client) 
+{
+    int currentStateColor, currentColor, colorFeedback = 0;
+    int baseSpeed = 100; 
+    int kLine = 1; // Feedback coefficient
+    // Line Following Control
+    while (true) { // In future, replace with distance sensor instead of true
+        currentColor = detectColorClass(50);
+
+        printColor(client, currentColor);
+        if (currentColor == currentStateColor) {
+            if (currentColor == 0) {
+                tankDrive(0, baseSpeed + (kLine * colorFeedback));
+            } else {
+                tankDrive(baseSpeed + (kLine * colorFeedback), 0);
+            }
+            colorFeedback++; 
+        } else if (currentColor == lineColor){
+
+            //Swap Target and Current
+            int tempColor = lineColor;
+            lineColor = currentStateColor;
+            currentStateColor = tempColor;
+            colorFeedback = 0;
+        } else {
+            return;
+        }
+    }
+}

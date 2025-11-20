@@ -1,6 +1,10 @@
-#include "motorcontrol.h"
+/*
+ *  state.h
+ *
+ *  Defining the state Implementations,
+ */
+
 #include "state.h"
-#include "linefollow.h"
 #include "colorDetect.h"
 
 void nextState(States state) 
@@ -8,7 +12,7 @@ void nextState(States state)
   state = static_cast<States>((static_cast<int>(state) + 1) % 7);
 }
 
-void handleState(Motor &motor, States state, LineFollow lineFollow, WebSocketClient &client)
+void handleState(Motor& motor, States state, WebSocketClient &client)
 {
     switch (state) {
         case STOP:
@@ -40,11 +44,11 @@ void handleState(Motor &motor, States state, LineFollow lineFollow, WebSocketCli
             break;
 
         case FollowLeft:
-            lineFollow.followLeft(motor, COLOR_BLUE, client);
+            motor.followLane(LEFT_EDGE, COLOR_BLUE, client);
             break;
             
         case FollowRight:
-            lineFollow.followRight(motor, COLOR_BLUE, client);
+            motor.followLane(RIGHT_EDGE, COLOR_BLUE, client);
             break;
 
         default:
