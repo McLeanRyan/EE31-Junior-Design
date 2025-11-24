@@ -19,20 +19,12 @@ int port = 80;
 WiFiClient wifi;
 WebSocketClient client = WebSocketClient(wifi, serverAddress, port);
 String clientID = CLIENT_ID; //Insert your Server ID Here!
-
-volatile bool buttonPressed = false;  // set in ISR
 States state = STOP;
-
-// ISR
-void handleButtonInterrupt() {
-  buttonPressed = true;
-}
 
 void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
     pinMode(A0, INPUT_PULLUP);
 
-    attachInterrupt(digitalPinToInterrupt(A0), handleButtonInterrupt, FALLING);
     colorDetectSetup();
     initializeWifi(ssid, pass);
 }
@@ -50,9 +42,9 @@ void remoteCommanBotMotionsWithPartner() {
 
                 String command = parsed.substring(8); // strip "PARTNER:"
                 if (command == "State: 1") {
-                    //handleState(motor, (States) 1, lineFollow, client);
+                    handleState(motor, (States) 1, client);
                     delay(5000);
-                    //handleState(motor, (States) 0, lineFollow, client);
+                    handleState(motor, (States) 0, client);
 
                     /* Flash LED*/
                     digitalWrite(LED_BUILTIN, HIGH);
@@ -70,8 +62,6 @@ void remoteCommanBotMotionsWithPartner() {
 }
 
 void loop() {
-    
-    delay(100);
 
     if (!client.connected()) {
         client.begin();
@@ -82,13 +72,12 @@ void loop() {
         client.endMessage();
     }
 
-    while(true) {
+    while (true) {
         state = (States) FollowLeft;
-        //handleState(motor, state, lineFollow, client); 
+        handleState(motor, state, client); 
     }
     
     while (client.connected()) {
-        delay(100);
         if (client.parseMessage() > 0) {
             /* Read Message Constantly from the Server, only from our bot / DEI */
             String parsed = parseMessage(client);

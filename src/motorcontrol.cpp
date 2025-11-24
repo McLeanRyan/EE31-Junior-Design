@@ -23,12 +23,16 @@ void printColor(WebSocketClient &client, int currentColor) {
     /* Print Current Color */
     client.beginMessage(TYPE_TEXT);
     if (currentColor == 0){
+        Serial.println("Current Color Reading is Black " );
         client.println("Current Color Reading is Black " );
     } else if (currentColor == 1) {
+        Serial.println("Current Color Reading is Blue " );
         client.println("Current Color Reading is Blue " );
     } else if (currentColor == 2) {
+        Serial.println("Current Color Reading is Yellow " );
         client.println("Current Color Reading is Yellow " );
     } else if (currentColor == 3) {
+        Serial.println("Current Color Reading is Red " );
         client.println("Current Color Reading is Red " );
     }
     client.endMessage();
