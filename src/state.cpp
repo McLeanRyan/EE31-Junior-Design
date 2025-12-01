@@ -44,11 +44,11 @@ void handleState(Motor& motor, States state, WebSocketClient &client)
             break;
 
         case FollowLeft:
-            motor.followLane(LEFT_EDGE, COLOR_BLUE, client);
+            motor.followLane(LEFT_EDGE, COLOR_RED, client);
             break;
             
         case FollowRight:
-            motor.followLane(RIGHT_EDGE, COLOR_BLUE, client);
+            motor.followLane(RIGHT_EDGE, COLOR_RED, client);
             break;
 
         default:

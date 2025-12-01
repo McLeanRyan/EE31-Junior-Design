@@ -8,7 +8,7 @@
  */
 #include "motorcontrol.h"
 #include <ArduinoHttpClient.h>
-#include "colordetect.h"
+#include "colorDetect.h"
 
 #define LEFT_ENABLE 9
 #define LEFT_CC 7
@@ -36,7 +36,7 @@ void printColor(WebSocketClient &client, int currentColor) {
         client.println("Current Color Reading is Red " );
     }
     client.endMessage();
-    delay(1000);
+    delay(500);
 }
 
 /*  Motor
@@ -200,44 +200,61 @@ void Motor::tankDrive(int speedLeft, int speedRight)
 
    This function follows the line depending on which edge is inputted
 */
-void Motor::followLane(Edge Side, int lineColor, WebSocketClient &client)
+void Motor::followLane(Edge side, int lineColor, WebSocketClient &client)
 {
-    int currentStateColor, currentColor, colorFeedback, boost = 0;
-    int baseSpeed = 100; 
-    int kLine = 1; // Feedback coefficient
+    int currentStateColor = 0;
+    int currentColor = 0;
+    int colorFeedback = 0;
 
-    /* Left and Right Boost Turns the Corrsponding wheel and stops other one */
-    int leftBoost  = (Side == RIGHT_EDGE ? 1 : 0);
-    int rightBoost = (Side == LEFT_EDGE  ? 1 : 0);
+    int baseSpeed = 100;
+    int kLine = 1;
 
-    /* Line Following Control */
     while (true) {
         currentColor = detectColorClass(25);
         printColor(client, currentColor);
 
         if (currentColor == currentStateColor) {
 
-            /* Turn the Motor Faster */
-            boost = baseSpeed + kLine * colorFeedback;
+            int boost = baseSpeed + (kLine * colorFeedback);
+            int leftPower = 0;
+            int rightPower = 0;
 
-            /* rightBoost / leftBoost will be either 0 or 1, not both */
-            int rightPower = boost * rightBoost;
-            int leftPower  = boost * leftBoost;
+            // GENERALIZED COLOR → MOTOR MAPPING
+            if (side == RIGHT_EDGE) {
+                // same behavior as your working followRight()
+                if (currentColor == 0)
+                    leftPower = boost;   // hugging right, left wheel drives
+                else
+                    rightPower = boost;  // saw line, correct by driving right wheel
+            } 
+            else { // LEFT_EDGE
+                // mirrored logic
+                if (currentColor == 0)
+                    rightPower = boost;  // hugging left, right wheel drives
+                else
+                    leftPower = boost;   // saw line, correct by driving left wheel
+            }
+
+            Serial.print("Left Power: ");
+            Serial.println(leftPower);
+            Serial.print("Right Power: ");
+            Serial.println(rightPower);
 
             tankDrive(leftPower, rightPower);
             colorFeedback++;
-
-        } else if (currentColor == lineColor) {
-            /* Swap Target and Current */
-            int tempColor = lineColor;
+        } 
+        else if (currentColor == lineColor) {
+            int temp = lineColor;
             lineColor = currentStateColor;
-            currentStateColor = tempColor;
+            currentStateColor = temp;
             colorFeedback = 0;
-        } else {
+        } 
+        else {
             return;
         }
     }
 }
+
 
 /* followRight
    Inputs: Motor 
@@ -246,9 +263,10 @@ void Motor::followLane(Edge Side, int lineColor, WebSocketClient &client)
 */
 void Motor::followRight(int lineColor, WebSocketClient &client)
 {
-    int currentStateColor, currentColor, colorFeedback = 0;
+    int currentStateColor = 0, currentColor = 0, colorFeedback = 0, boost = 0;
     int baseSpeed = 100; 
     int kLine = 1; // Feedback coefficient
+
 
     // Line Following Control
     while (true) { // In future, replace with distance sensor instead of true
