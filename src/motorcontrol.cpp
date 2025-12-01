@@ -7,6 +7,7 @@
  *  Motor Implementations 
  */
 #include "motorcontrol.h"
+#include "irDetect.h"
 #include <ArduinoHttpClient.h>
 
 #define LEFT_ENABLE 9

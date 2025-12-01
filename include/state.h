@@ -11,8 +11,8 @@ enum States {
     PivotClockwise,
     PivotCounterClockwise,
     TurnRight,
-    TurnLeft,
-    CollisionAvoidance
+    TurnLeft
+    // CollisionAvoidance
 };
 
 class Motor;

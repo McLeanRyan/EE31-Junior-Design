@@ -46,12 +46,6 @@ Motor motor;
 void loop() {
     delay(100);
 
-    //testing loop
-    while(true){
-        state = (States) CollisionAvoidance;
-        handleState(motor, state); 
-    }
-
     if (!client.connected()) {
         client.begin();
         delay(100);

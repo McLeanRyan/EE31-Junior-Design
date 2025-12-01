@@ -15,6 +15,10 @@ void handleState(Motor &motor, States state)
             break;
 
         case FORWARD:
+            if (detectDistance(-500)) {
+                motor.stop();
+                break;
+            }
             motor.driveForward(200);      
             break;
 
@@ -23,27 +27,43 @@ void handleState(Motor &motor, States state)
             break;
 
         case PivotClockwise:
+            if (detectDistance(-500)) {
+                motor.stop();
+                break;
+            }
             motor.pivotCW();            
             break;
 
         case PivotCounterClockwise:
+            if (detectDistance(-500)) {
+                motor.stop();
+                break;
+            }
             motor.pivotCCW();
             break;
 
         case TurnRight:
+            if (detectDistance(-400)) {
+                motor.stop();
+                break;
+            }
             motor.turnRight(150);
             break;
 
         case TurnLeft:
+            if (detectDistance(-400)) {
+                motor.stop();
+                break;
+            }
             motor.turnLeft(150);
             break;
 
-        case CollisionAvoidance:
-            if (detectDistance(-500)) break;
-            motor.driveForward(200);
-            while (!detectDistance(-500)) {}
-            motor.stop();
-            break;
+        // case CollisionAvoidance:
+        //     if (detectDistance(-500)) break;
+        //     motor.driveForward(200);
+        //     while (!detectDistance(-500)) {}
+        //     motor.stop();
+        //     break;
 
         default:
             motor.stop();
