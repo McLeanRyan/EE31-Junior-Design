@@ -292,38 +292,3 @@ void Motor::followRight(int lineColor, WebSocketClient &client)
         }
     }
 }
-
-/* followLeft
-   Inputs: Motor, client for debugging
-   This function follows a line on the left edge, meaning the colored line is
-   to the left of the robot.
-*/
-void Motor::followLeft(int lineColor, WebSocketClient &client) 
-{
-    int currentStateColor, currentColor, colorFeedback = 0;
-    int baseSpeed = 100; 
-    int kLine = 1; // Feedback coefficient
-    // Line Following Control
-    while (true) { // In future, replace with distance sensor instead of true
-        currentColor = detectColorClass(50);
-
-        printColor(client, currentColor);
-        if (currentColor == currentStateColor) {
-            if (currentColor == 0) {
-                tankDrive(0, baseSpeed + (kLine * colorFeedback));
-            } else {
-                tankDrive(baseSpeed + (kLine * colorFeedback), 0);
-            }
-            colorFeedback++; 
-        } else if (currentColor == lineColor){
-
-            //Swap Target and Current
-            int tempColor = lineColor;
-            lineColor = currentStateColor;
-            currentStateColor = tempColor;
-            colorFeedback = 0;
-        } else {
-            return;
-        }
-    }
-}
