@@ -8,6 +8,8 @@
  */
 #include "motorcontrol.h"
 #include <ArduinoHttpClient.h>
+// IMU wrapper (reads gyroscope)
+#include "imu.h"
 
 #define LEFT_ENABLE 9
 #define LEFT_CC 7
@@ -112,9 +114,9 @@ void Motor::pivotCW()
 }
 
 /* turnRight
-   Description: Turns the bot to the right with a given turnRadius factor
+    Description: Turns the bot to the right with a given turnRadius factor
 */
-void Motor::turnLeft(int turnRadius) {
+void Motor::turnRight(int turnRadius) {
     // turnRadius can control duration — tweak this experimentally
     int outerSpeed = 150;   // right wheel goes slower (inner wheel)
     int innerSpeed = 100;
@@ -135,9 +137,9 @@ void Motor::turnLeft(int turnRadius) {
 }
 
 /* turnLeft
-   Description: Turns the bot to the left with a given turnRadius factor
+    Description: Turns the bot to the left with a given turnRadius factor
 */
-void Motor::turnRight(int turnRadius) {
+void Motor::turnLeft(int turnRadius) {
     int outerSpeed = 150;
     int innerSpeed = 100;
 
@@ -156,19 +158,73 @@ void Motor::turnRight(int turnRadius) {
     stop();
 }
 
-/* tankDrive
-   Description: Drive each wheel forward with individual speed
-*/
-void Motor::tankDrive(int speedLeft, int speedRight) {
-    // Both wheels moving forward
-    digitalWrite(LEFT_CW, HIGH);
-    digitalWrite(LEFT_CC, LOW);
-    digitalWrite(RIGHT_CW, HIGH);
-    digitalWrite(RIGHT_CC, LOW);
+void gyroDrive(int speed) 
+{
+    // Set motor directions to forward for both wheels
+    digitalWrite(LEFT_CW, HIGH);   // left motor clockwise high => forward
+    digitalWrite(LEFT_CC, LOW);    // left motor counter-clockwise low
+    digitalWrite(RIGHT_CW, HIGH);  // right motor clockwise high => forward
+    digitalWrite(RIGHT_CC, LOW);   // right motor counter-clockwise low
 
-    analogWrite(LEFT_ENABLE, speedLeft);
-    analogWrite(RIGHT_ENABLE, speedRight);
+    // PID gains 
+    double kP = 1.0;
+    double kI = 0.0;
+    double kD = 0.0;
+
+    // Read an initial gyro sample to use as the target (baseline) rate
+    float gx = 0.0f, gy = 0.0f, gz = 0.0f;
+    double target = 0.0; // desired angular rate (deg/s)
+    if (imuRead(gx, gy, gz)) {
+        // store starting gz as target so we try to maintain initial rotation rate
+        target = (double)gz;
+    }
+
+    // PID state variables - initialize to zero
+    double totalError = 0.0;
+    double previousError = 0.0;
+    double changeError = 0.0;
+    double PIDOut = 0.0;
+
+    // Control loop: run for a fixed number of iterations
+    for (int i = 0; i < 1000; i++) {
+        // Read current gyro (gz) value
+        if (!imuRead(gx, gy, gz)) {
+            // if read failed, skip this iteration
+            delay(1);
+            continue;
+        }
+
+        // Compute error between desired target rate and current measured rate
+        double e = target - (double)gz;
+
+        // Integrate error (simple integral term)
+        totalError += e;
+
+        // Compute change in error (for derivative term)
+        changeError = e - previousError;
+
+        // PID output: proportional + integral + derivative
+        PIDOut = (kP * e) + (kI * totalError) + (kD * changeError);
+
+        // Apply PID correction to left/right PWM values
+        if (e > 0) {
+            // If error positive, rotate correction one way
+            analogWrite(LEFT_ENABLE, constrain((int)(speed + PIDOut), 0, 255));
+            analogWrite(RIGHT_ENABLE, constrain((int)(speed - PIDOut), 0, 255));
+        } else if (e < 0) {
+            // If error negative, rotate correction the other way
+            analogWrite(LEFT_ENABLE, constrain((int)(speed - PIDOut), 0, 255));
+            analogWrite(RIGHT_ENABLE, constrain((int)(speed + PIDOut), 0, 255));
+        } else {
+            // No error: drive straight at base speed
+            analogWrite(LEFT_ENABLE, constrain(speed, 0, 255));
+            analogWrite(RIGHT_ENABLE, constrain(speed, 0, 255));
+        }
+
+        // Save current error for next loop's derivative calculation
+        previousError = e;
+
+        // Small sleep to avoid maxing out loop speed
+        delay(5);
+    }
 }
-
-
-
