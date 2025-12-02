@@ -228,3 +228,69 @@ void gyroDrive(int speed)
         delay(5);
     }
 }
+
+void gyroTurn(double angle) 
+{
+    double kP = 1;
+    double kI = 0;
+    double kD = 0;
+    double kDrive = 1; // Scale output of PID controller to pass as speed
+    int baseSpeed = 100;
+    // Read initial gyro z-rate to form a simple baseline
+    float gx = 0.0f, gy = 0.0f, gz = 0.0f;
+    if (!imuRead(gx, gy, gz)) {
+        return; // can't read imu, abort
+    }
+
+    // Use current gz reading as the baseline and form a simple target
+    double target = angle + (double)gz; // baseline + requested angle
+    double totalError = 0.0;
+    double previousError = 0.0;
+    double changeError = 0.0;
+    double PIDOut = 0.0;
+    double e = 100.0;
+
+    while (fabs(e) > 0.1) {
+        // update current gyro reading
+        if (!imuRead(gx, gy, gz)) {
+            delay(1);
+            continue;
+        }
+
+        // compute error using the current gz value
+        e = target - (double)gz;
+        totalError += e;
+        changeError = e - previousError;
+        PIDOut = kDrive * ((kP * e) + (kI * totalError) + (kD * changeError));
+
+        int pwm = constrain((int)fabs(PIDOut), 0, 255);
+
+        if (e > 0) {
+            digitalWrite(LEFT_CW, LOW);
+            digitalWrite(LEFT_CC, HIGH);
+            digitalWrite(RIGHT_CW, HIGH);
+            digitalWrite(RIGHT_CC, LOW);
+
+            analogWrite(LEFT_ENABLE, pwm);
+            analogWrite(RIGHT_ENABLE, pwm);
+        } else if (e < 0) {
+            digitalWrite(LEFT_CW, HIGH);
+            digitalWrite(LEFT_CC, LOW);
+            digitalWrite(RIGHT_CW, LOW);
+            digitalWrite(RIGHT_CC, HIGH);
+
+            analogWrite(LEFT_ENABLE, pwm);
+            analogWrite(RIGHT_ENABLE, pwm);
+        } else {
+            analogWrite(LEFT_ENABLE, 0);
+            analogWrite(RIGHT_ENABLE, 0);
+        }
+
+        previousError = e;
+        delay(5);
+    }
+
+    // stop motors when done
+    analogWrite(LEFT_ENABLE, 0);
+    analogWrite(RIGHT_ENABLE, 0);
+}
