@@ -156,7 +156,7 @@ void Motor::rightTurn(int turnRadius) {
     stop();
 }
 
-void gyroDrive(int speed) 
+void gyroDrive(int speed, int delay) 
 {
     digitalWrite(LEFT_CW, HIGH);
     digitalWrite(LEFT_CC, LOW);
@@ -170,7 +170,7 @@ void gyroDrive(int speed)
     double target = 0; //REPLACE 0 WITH GYRO READING AT START
     double totalError, previousError, changeError, PIDOut = 0;
 
-    for (int i = 0; i<1000; i++) {
+    for (int i = 0; i<delay; i++) {
         double e = target - 0; // REPLACE 0 WITH CURRENT GYRO READING
         totalError += e;
         changeError = e - previousError;
@@ -197,9 +197,10 @@ void gyroTurn(double angle)
 
     double target = angle + 0; //REPLACE 0 WITH GYRO READING AT START
     double totalError, previousError, changeError, PIDOut = 0;
+    double e = 100;
 
-    for (int i = 0; i<1000; i++) {
-        double e = target - 0; // REPLACE 0 WITH CURRENT GYRO READING
+    while(e > 0.1) {
+        e = target - 0; // REPLACE 0 WITH CURRENT GYRO READING
         totalError += e;
         changeError = e - previousError;
         PIDOut = kDrive * ((kP * e) + (kI * totalError) + (kD * changeError));
