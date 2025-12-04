@@ -1,6 +1,6 @@
 #include "motorcontrol.h"
 #include "linefollow.h"
-#include "colordetect.h"
+#include "colorDetect.h"
 #include <ArduinoHttpClient.h>
 
 /* followLeft

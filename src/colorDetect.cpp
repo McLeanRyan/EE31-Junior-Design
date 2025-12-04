@@ -21,10 +21,10 @@ static int ambientBaseline = 0;
 
 int training[4][4] = 
 {
-    {-35,  -50,    0, COLOR_BLACK},
+    {-15,   -5,   -5, COLOR_BLACK},
     {-170, -180,   0, COLOR_BLUE},
     {-110, -100, -50, COLOR_YELLOW},
-    {-70,  -60,  -20, COLOR_RED}
+    {-40,  -25,  -30, COLOR_RED}
 };
 
 void colorDetectSetup()
@@ -50,18 +50,24 @@ int detectColorClass(int delayMs)
     // RED
     digitalWrite(PIN_RED_LED, HIGH);
     delay(delayMs);
+    Serial.print("RED: ");
+    Serial.println(analogRead(PIN_SENSOR)-ambientBaseline);
     current_red = analogRead(PIN_SENSOR) - ambientBaseline;
     digitalWrite(PIN_RED_LED, LOW);
 
     // BLUE
     digitalWrite(PIN_BLUE_LED, HIGH);
     delay(delayMs);
+    Serial.print("BLUE: ");
+    Serial.println(analogRead(PIN_SENSOR)-ambientBaseline);
     current_blue = analogRead(PIN_SENSOR) - ambientBaseline;
     digitalWrite(PIN_BLUE_LED, LOW);
 
     // YELLOW
     digitalWrite(PIN_YELLOW_LED, HIGH);
     delay(delayMs);
+    Serial.print("YELLOW: ");
+    Serial.println(analogRead(PIN_SENSOR)-ambientBaseline);
     current_yellow = analogRead(PIN_SENSOR) - ambientBaseline;
     digitalWrite(PIN_YELLOW_LED, LOW);
 
@@ -87,5 +93,6 @@ int calculateClass(int blue1, int yellow1, int red1) {
             classifier = training[i][3];
         } 
     }
+    Serial.println(classifier);
     return classifier;
 }
