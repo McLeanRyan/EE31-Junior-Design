@@ -41,7 +41,7 @@ void colorDetectSetup()
 }
 
 // Perform LED measurement sequence and classify
-int detectColorClass(int delayMs)
+int detectColorClass(int delayMs, WebSocketClient &client)
 {
     int current_blue = 0;
     int current_yellow = 0;
@@ -50,18 +50,45 @@ int detectColorClass(int delayMs)
     // RED
     digitalWrite(PIN_RED_LED, HIGH);
     delay(delayMs);
+<<<<<<< Updated upstream
+=======
+    Serial.print("RED: ");
+    Serial.println(analogRead(PIN_SENSOR)-ambientBaseline);
+    // client.beginMessage(TYPE_TEXT);
+    // client.print("Red: ");
+    // client.print(analogRead(PIN_SENSOR)-ambientBaseline);
+    // client.endMessage();
+>>>>>>> Stashed changes
     current_red = analogRead(PIN_SENSOR) - ambientBaseline;
     digitalWrite(PIN_RED_LED, LOW);
 
     // BLUE
     digitalWrite(PIN_BLUE_LED, HIGH);
     delay(delayMs);
+<<<<<<< Updated upstream
+=======
+    Serial.print("BLUE: ");
+    Serial.println(analogRead(PIN_SENSOR)-ambientBaseline);
+    // client.beginMessage(TYPE_TEXT);
+    // client.print("Blue: ");
+    // client.print(analogRead(PIN_SENSOR)-ambientBaseline);
+    // client.endMessage();
+>>>>>>> Stashed changes
     current_blue = analogRead(PIN_SENSOR) - ambientBaseline;
     digitalWrite(PIN_BLUE_LED, LOW);
 
     // YELLOW
     digitalWrite(PIN_YELLOW_LED, HIGH);
     delay(delayMs);
+<<<<<<< Updated upstream
+=======
+    Serial.print("YELLOW: ");
+    Serial.println(analogRead(PIN_SENSOR)-ambientBaseline);
+    // client.beginMessage(TYPE_TEXT);
+    // client.print("Yellow: ");
+    // client.print(analogRead(PIN_SENSOR)-ambientBaseline);
+    // client.endMessage();
+>>>>>>> Stashed changes
     current_yellow = analogRead(PIN_SENSOR) - ambientBaseline;
     digitalWrite(PIN_YELLOW_LED, LOW);
 

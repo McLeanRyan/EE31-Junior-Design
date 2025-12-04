@@ -44,14 +44,34 @@ Motor motor;
 void loop() {
     delay(100);
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     if (!client.connected()) {
         client.begin();
         delay(100);
         client.beginMessage(TYPE_TEXT);
         client.print(clientID);
         client.endMessage();
+        
     }
+<<<<<<< Updated upstream
     
+=======
+    Serial.println("Done");
+
+    while(client.connected()){
+        // state = (States) FollowLeft;
+        // handleState(motor, state, lineFollow); 
+        int color = detectColorClass(1500, client);
+        // client.beginMessage(TYPE_TEXT);
+        // client.print("Function Returns: ");
+        // client.println(color);
+        // client.endMessage();
+        }
+
+>>>>>>> Stashed changes
     while (client.connected()) {
         int messageSize = client.parseMessage();
         if (messageSize > 0) {

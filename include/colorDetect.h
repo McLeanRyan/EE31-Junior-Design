@@ -8,6 +8,7 @@
  */
 #ifndef COLOR_DETECT_H
 #define COLOR_DETECT_H
+#include <ArduinoHttpClient.h>
 
 // Color class labels
 enum ColorClass {
@@ -21,7 +22,7 @@ enum ColorClass {
 void colorDetectSetup();
 
 // Performs one measurement cycle and returns ColorClass
-int detectColorClass(int delayMs = 50);
+int detectColorClass(int delayMs, WebSocketClient &client);
 
 // Calculates the closest color class based on the values
 int calculateClass(int blue1, int yellow1, int red1);
