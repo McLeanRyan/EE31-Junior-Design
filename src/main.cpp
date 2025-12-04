@@ -75,11 +75,6 @@ void loop()
         client.print(clientID);
         client.endMessage();
     }
-
-    while (true) {
-        state = (States) FollowLeft;
-        //handleState(motor, state, client); 
-    }
     
     while (client.connected()) {
         if (client.parseMessage() > 0) {

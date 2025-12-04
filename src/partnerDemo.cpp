@@ -1,12 +1,13 @@
 /*
  *  soloDemo.cpp
  *
- *  Defining the Solo Demo Implementations
+ *  Defining the Partner Demo Implementations
  */
 
 #include "soloDemo.h"
 #include "irDetect.h"
 #include "colorDetect.h"
+#include "websocket.h"
 
 enum DemoState {
     DRIVE_TO_FIRST_WALL,
@@ -17,29 +18,19 @@ enum DemoState {
     TURN_LEFT_AFTER_RED_WALL,
     DRIVE_TO_YELLOW,
     TURN_LEFT_AT_YELLOW,
+    WAIT_AT_YELLOW,
     FOLLOW_YELLOW_TO_WALL,
     TURN_LEFT_FINAL,
     RETURN_TO_START,
     DEMO_DONE
 };
 
-/* 1. Drives Forward until it detects wall
-    2. Detects wall
-    3. Pivotes 170-180 degrees
-    4. Drive Forward until detects Red
-    5. Detects Red -> Turns left 90 Degrees
-    6. Follows Red Lane until it detects wall
-    7. Detects Wall -> Turns Left 90 Degrees
-    8. Forward until Detects Yellow
-    9. Detects Yellow -> Turn Left 90 degrees
-    10. Follows Yellow Lane until it detects wall
-    11. Turn Left 90 Degrees
-    12. Go back to start
-*/
-
-void soloDemo(Motor &motor, States state, WebSocketClient &client, int lineColor)
+void partnerDemo(Motor &motor, States state, WebSocketClient &client, int lineColor)
 {
     DemoState demo = DRIVE_TO_FIRST_WALL;
+    client.beginMessage(TYPE_TEXT);
+    client.println("beep");
+    client.endMessage();
 
     while (client.connected() && demo != DEMO_DONE)
     {
@@ -78,6 +69,9 @@ void soloDemo(Motor &motor, States state, WebSocketClient &client, int lineColor
                     motor.stop();
                     delay(300);
                     demo = TURN_LEFT_AT_RED;
+                    client.beginMessage(TYPE_TEXT);
+                    client.println("red lane found");
+                    client.endMessage();
                 }
                 break;
             }
@@ -135,7 +129,21 @@ void soloDemo(Motor &motor, States state, WebSocketClient &client, int lineColor
                 motor.pivotCCW();
                 delay(300);
                 motor.stop();
-                demo = FOLLOW_YELLOW_TO_WALL;
+                demo = WAIT_AT_YELLOW;
+                break;
+            
+            // ---------------------------------------------------------
+            // 8.5 . Wait till Partner sends signal
+            // ---------------------------------------------------------
+            case WAIT_AT_YELLOW:
+                if (client.parseMessage() > 0) {
+
+                    String parsed = parseMessage(client);
+                    Serial.println(parsed);
+                    if (parsed.startsWith("PARTNER:")) {
+                        String command = parsed.substring(8); // strip "PARTNER:"
+                    }
+                }
                 break;
 
             // ---------------------------------------------------------
@@ -178,4 +186,3 @@ void soloDemo(Motor &motor, States state, WebSocketClient &client, int lineColor
         delay(10);   // loop pacing
     }
 }
-
