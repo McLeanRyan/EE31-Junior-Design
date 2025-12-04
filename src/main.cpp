@@ -47,9 +47,9 @@ void loop() {
     delay(100);
 
     while(true){
-        // state = (States) FollowLeft;
-        // handleState(motor, state, lineFollow); 
-        detectColorClass(500);
+        state = (States) FollowLeft;
+        handleState(motor, state, lineFollow); 
+        //detectColorClass(50);
         
     }
 

@@ -12,16 +12,16 @@ void LineFollow::followRight(Motor& motor, int lineColor) {
     int currentStateColor = 0;
     int currentColor = 0; // Equal to result of color sensor reading w/ some time average (over 3 reads?)
     int colorFeedback = 0;    
-    int baseSpeed = 80; 
-    int kLine = 10; // Feedback coefficient
+    int baseSpeed = 120; 
+    int kLine = 1; // Feedback coefficient
     // Line Following Control
     while (true) { 
-        currentColor = detectColorClass(25);
+        currentColor = detectColorClass(5);
         if (currentColor == currentStateColor) {
             if (currentColor == 0) {
-                motor.tankDrive(baseSpeed + (kLine * colorFeedback), 0);
+                motor.tankDrive(baseSpeed + (kLine * colorFeedback), 60);
             } else {
-                motor.tankDrive(0, baseSpeed + (kLine * colorFeedback));
+                motor.tankDrive(60, baseSpeed + (kLine * colorFeedback));
             }
             colorFeedback++; 
         } else if (currentColor == lineColor){
@@ -42,16 +42,16 @@ void LineFollow::followLeft(Motor& motor, int lineColor) {
     int currentStateColor = 0;
     int currentColor = 0; // Equal to result of color sensor reading w/ some time average (over 3 reads?)
     int colorFeedback = 0;    
-    int baseSpeed = 100; 
+    int baseSpeed = 120; 
     int kLine = 1; // Feedback coefficient
     // Line Following Control
     while (true) { // In future, replace with distance sensor instead of true
-        currentColor = detectColorClass(25);
+        currentColor = detectColorClass(5);
         if (currentColor == currentStateColor) {
             if (currentColor == 0) {
-                motor.tankDrive(0, baseSpeed + (kLine * colorFeedback));
+                motor.tankDrive(60, baseSpeed + (kLine * colorFeedback));
             } else {
-                motor.tankDrive(baseSpeed + (kLine * colorFeedback), 0);
+                motor.tankDrive(baseSpeed + (kLine * colorFeedback), 60);
             }
             colorFeedback++; 
         } else if (currentColor == lineColor){
