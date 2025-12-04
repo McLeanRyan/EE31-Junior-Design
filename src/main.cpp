@@ -32,41 +32,45 @@ void setup() {
 int current_blue, current_yellow, current_red, current_class = 0;
 Motor motor;
 
-void remoteCommanBotMotionsWithPartner() {
-    while (client.connected()) {
-        if (client.parseMessage() > 0) {
+void remoteCommanBotMotionsWithPartner() 
+{
+    // while (client.connected()) {
+    //     if (client.parseMessage() > 0) {
 
-            String parsed = parseMessage(client);
-            Serial.println(parsed);
-            if (parsed.startsWith("PARTNER:")) {
+    //         String parsed = parseMessage(client);
+    //         Serial.println(parsed);
+    //         if (parsed.startsWith("PARTNER:")) {
 
-                String command = parsed.substring(8); // strip "PARTNER:"
-                if (command == "State: 1") {
-                    handleState(motor, (States) 1, client);
-                    delay(5000);
-                    handleState(motor, (States) 0, client);
+    //             String command = parsed.substring(8); // strip "PARTNER:"
+    //             if (command == "State: 1") {
+    //                 handleState(motor, (States) 1, client);
+    //                 delay(5000);
+    //                 handleState(motor, (States) 0, client);
 
-                    /* Flash LED*/
-                    digitalWrite(LED_BUILTIN, HIGH);
-                    delay(300);
-                    digitalWrite(LED_BUILTIN, LOW);
+    //                 /* Flash LED*/
+    //                 digitalWrite(LED_BUILTIN, HIGH);
+    //                 delay(300);
+    //                 digitalWrite(LED_BUILTIN, LOW);
 
-                    client.beginMessage(TYPE_TEXT);
-                    client.print("State: 2");
-                    client.endMessage();
-                    Serial.println("MOVE sent to server");
-                }
-            }
-        }
-    }
+    //                 client.beginMessage(TYPE_TEXT);
+    //                 client.print("State: 2");
+    //                 client.endMessage();
+    //                 Serial.println("MOVE sent to server");
+    //             }
+    //         }
+    //     }
+    // }
 }
 
-void loop() {
-
-    if (!client.connected()) {
+void loop() 
+{
+    while (!client.connected()) {
         client.begin();
         delay(100);
-        Serial.println("Connecting");
+    }
+    
+    if (client.connected()) {
+        Serial.println("Done Connecting");
         client.beginMessage(TYPE_TEXT);
         client.print(clientID);
         client.endMessage();
@@ -74,7 +78,7 @@ void loop() {
 
     while (true) {
         state = (States) FollowLeft;
-        handleState(motor, state, client); 
+        //handleState(motor, state, client); 
     }
     
     while (client.connected()) {
@@ -104,7 +108,6 @@ void loop() {
                 Serial.println(state);
             }
         }
-        //handleState(motor, state);
     }
 
     Serial.println("disconnected");

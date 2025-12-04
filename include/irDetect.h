@@ -7,4 +7,4 @@ void irDetectSetup(int delayMS);
 // returns true if distance is past threshold (collision could happen)
 bool detectDistance(int threshold);
 
-#endifs
+#endif

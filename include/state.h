@@ -27,6 +27,6 @@ class Motor;
 class LineFollow;
 
 void nextState();
-void handleState(Motor& motor, States state, WebSocketClient &client);
+void handleState(Motor& motor, States state, WebSocketClient &client, int lineColor);
 
 #endif

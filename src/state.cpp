@@ -13,7 +13,7 @@ void nextState(States state)
   state = static_cast<States>((static_cast<int>(state) + 1) % 7);
 }
 
-void handleState(Motor& motor, States state, WebSocketClient &client)
+void handleState(Motor& motor, States state, WebSocketClient &client, int lineColor)
 {
     switch (state) {
         case STOP:
@@ -65,11 +65,11 @@ void handleState(Motor& motor, States state, WebSocketClient &client)
             break;
 
         case FollowLeft:
-            motor.followLane(LEFT_EDGE, COLOR_RED, client);
+            motor.followLane(LEFT_EDGE, lineColor, client);
             break;
             
         case FollowRight:
-            motor.followLane(RIGHT_EDGE, COLOR_RED, client);
+            motor.followLane(RIGHT_EDGE, lineColor, client);
             break;
 
         default:
