@@ -8,6 +8,7 @@
  */
 #include "motorcontrol.h"
 #include <ArduinoHttpClient.h>
+#include "imu.h"
 
 #define LEFT_ENABLE 9
 #define LEFT_CC 7
@@ -167,13 +168,26 @@ void gyroDrive(int speed, int delay)
     double kI = 0;
     double kD = 0;
 
-    double target = 0; //REPLACE 0 WITH GYRO READING AT START
+    float gx = 0.0f, gy = 0.0f, gz = 0.0f;
+    if (!imuRead(gx, gy, gz)) {
+        return; // can't read imu, abort
+    }
+
+    double target = double(gz); //REPLACE 0 WITH GYRO READING AT START
     double totalError, previousError, changeError, PIDOut = 0;
+    int lastTime = 0;
 
     for (int i = 0; i<delay; i++) {
-        double e = target - 0; // REPLACE 0 WITH CURRENT GYRO READING
-        totalError += e;
-        changeError = e - previousError;
+        if (!imuRead(gx, gy, gz)) {
+            continue;
+        }
+
+        unsigned long now = millis();
+        double dt = (now - lastTime) / 1000.0;  // Convert to seconds
+
+        double e = target - double(gz); // REPLACE 0 WITH CURRENT GYRO READING
+        totalError += (e*dt);
+        changeError = (e - previousError)/dt;
         PIDOut = (kP * e) + (kI * totalError) + (kD * changeError);
         
         if (e > 0) {
@@ -184,6 +198,7 @@ void gyroDrive(int speed, int delay)
             analogWrite(RIGHT_ENABLE, speed + PIDOut);
         }
         previousError = e;
+        lastTime = now;
     }
 }
 
@@ -195,14 +210,27 @@ void gyroTurn(double angle)
     double kDrive = 1; // Scale output of PID controller to pass as speed
     int baseSpeed = 100;
 
-    double target = angle + 0; //REPLACE 0 WITH GYRO READING AT START
+    float gx = 0.0f, gy = 0.0f, gz = 0.0f;
+    if (!imuRead(gx, gy, gz)) {
+        return; // can't read imu, abort
+    }
+
+    double target = angle + double(gz); //REPLACE 0 WITH GYRO READING AT START
     double totalError, previousError, changeError, PIDOut = 0;
     double e = 100;
+    int lastTime = 0;
 
-    while(e > 0.1) {
-        e = target - 0; // REPLACE 0 WITH CURRENT GYRO READING
-        totalError += e;
-        changeError = e - previousError;
+    while(abs(e) > 0.1) {
+        if (!imuRead(gx, gy, gz)) {
+            continue;
+        }
+
+        unsigned long now = millis();
+        double dt = (now - lastTime) / 1000.0;  // Convert to seconds
+
+        e = target -double(gz); // REPLACE 0 WITH CURRENT GYRO READING
+        totalError += (e * dt);
+        changeError = (e - previousError) / dt;
         PIDOut = kDrive * ((kP * e) + (kI * totalError) + (kD * changeError));
         
         if (e > 0) {
@@ -223,6 +251,7 @@ void gyroTurn(double angle)
             analogWrite(RIGHT_ENABLE, PIDOut);
         }
         previousError = e;
+        lastTime = now;
     }
 }
 
