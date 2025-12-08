@@ -21,10 +21,10 @@ static int ambientBaseline = 0;
 
 int training[4][4] = 
 {
-    {-15,   0,     0, COLOR_BLACK},
+    {-60,   0,     0, COLOR_BLACK},
     {-235, -0,   0, COLOR_BLUE},
     {-80,   -20, -70, COLOR_YELLOW},
-    {-20,   0,   -20, COLOR_RED}
+    {-60,   0,   -50, COLOR_RED}
 };
 
 int med_blue[5];
@@ -79,12 +79,15 @@ int detectColorClass(int delayMs)
     current_yellow = median5(med_yellow[0], med_yellow[1], med_yellow[2], med_yellow[3], med_yellow[4]);
     current_red    = median5(med_red[0], med_red[1], med_red[2], med_red[3], med_red[4]);
 
-    // Serial.print("BLUE: ");
-    // Serial.println(current_blue);
-    // Serial.print("YELLOW: ");
-    // Serial.println(current_yellow);
-    // Serial.print("RED: ");
-    // Serial.println(current_red);
+    Serial.print("BLUE: ");
+    Serial.println(current_blue);
+    Serial.print("YELLOW: ");
+    Serial.println(current_yellow);
+    Serial.print("RED: ");
+    Serial.println(current_red);
+    Serial.println("");
+    Serial.println(calculateClass(current_blue, current_yellow, current_red));
+    delay(500);
 
     return calculateClass(current_blue, current_yellow, current_red);
 }
