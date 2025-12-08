@@ -21,10 +21,10 @@ static int ambientBaseline = 0;
 
 int training[4][4] = 
 {
-    {0,   0,     0, COLOR_BLACK},
+    {-60,   0,     0, COLOR_BLACK},
     {-235, -0,   0, COLOR_BLUE},
     {-80,   -20, -70, COLOR_YELLOW},
-    {-20,   0,   -20, COLOR_RED}
+    {-60,   0,   -50, COLOR_RED}
 };
 
 int med_blue[5];

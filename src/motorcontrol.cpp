@@ -202,7 +202,7 @@ void Motor::tankDrive(int speedLeft, int speedRight)
 */
 void Motor::followLane(Edge side, int lineColor, WebSocketClient &client)
 {
-    int currentStateColor = COLOR_RED;
+    int currentStateColor = COLOR_BLACK;
     int currentColor = 0;
     int colorFeedback = 0;
 
@@ -210,8 +210,8 @@ void Motor::followLane(Edge side, int lineColor, WebSocketClient &client)
     int kLine = 1;
 
     while (true) {
-        currentColor = detectColorClass(25);
-        printColor(client, currentColor);
+        currentColor = detectColorClass(5);
+        //printColor(client, currentColor);
 
         if (currentColor == currentStateColor) {
 
