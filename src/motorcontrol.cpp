@@ -206,7 +206,7 @@ void Motor::followLane(Edge side, int lineColor, WebSocketClient &client)
     int currentColor = 0;
     int colorFeedback = 0;
 
-    int baseSpeed = 100;
+    int baseSpeed = 120;
     int kLine = 1;
 
     while (true) {
@@ -219,20 +219,26 @@ void Motor::followLane(Edge side, int lineColor, WebSocketClient &client)
             int leftPower = 0;
             int rightPower = 0;
 
-            // GENERALIZED COLOR → MOTOR MAPPING
+            // GENERALIZED COLOR
             if (side == RIGHT_EDGE) {
                 // same behavior as your working followRight()
-                if (currentColor == 0)
+                if (currentColor == 0) {
                     leftPower = boost;   // hugging right, left wheel drives
-                else
+                    rightPower = 60;
+                } else {
                     rightPower = boost;  // saw line, correct by driving right wheel
+                    leftPower = 60;
+                }
             } 
             else { // LEFT_EDGE
                 // mirrored logic
-                if (currentColor == 0)
+                if (currentColor == 0) {
                     rightPower = boost;  // hugging left, right wheel drives
-                else
+                    leftPower = 60;
+                } else {
                     leftPower = boost;   // saw line, correct by driving left wheel
+                    rightPower = 60;
+                }
             }
 
             // Serial.print("Left Power: ");

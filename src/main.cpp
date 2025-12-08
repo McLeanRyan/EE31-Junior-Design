@@ -79,10 +79,11 @@ void loop()
         client.endMessage();
     }
     
-    while( true ){
+    while( true ) {
         state = (States) FollowLeft;
-        handleState(motor, state, client, COLOR_BLUE);     
+        handleState(motor, state, client, COLOR_RED);     
     }
+
     while (client.connected()) {
         if (client.parseMessage() > 0) {
             /* Read Message Constantly from the Server, only from our bot / DEI */
