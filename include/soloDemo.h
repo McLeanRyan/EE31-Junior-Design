@@ -10,6 +10,6 @@
 #include <ArduinoHttpClient.h>
 #include "state.h"
 
-void soloDemo(Motor &motor, States state, WebSocketClient &client, int lineColor);
+void soloDemo(Motor &motor, WebSocketClient &client);
     
 #endif

@@ -37,7 +37,7 @@ enum DemoState {
     12. Go back to start
 */
 
-void soloDemo(Motor &motor, States state, WebSocketClient &client, int lineColor)
+void soloDemo(Motor &motor, WebSocketClient &client)
 {
     DemoState demo = DRIVE_TO_FIRST_WALL;
 

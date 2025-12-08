@@ -5,6 +5,7 @@
 #include "motorcontrol.h"
 #include "state.h"
 #include "colorDetect.h"
+#include "soloDemo.h"
 
 /* SERVER CONFIGURATION */
 // wscat -c ws://10.5.12.14
@@ -78,40 +79,42 @@ void loop()
         client.println(" is connected");
         client.endMessage();
     }
+
+    soloDemo(motor, client);
     
-    while( true ) {
-        state = (States) FollowLeft;
-        handleState(motor, state, client, COLOR_RED);     
-    }
+    // while( true ) {
+    //     state = (States) FollowLeft;
+    //     handleState(motor, state, client, COLOR_RED);     
+    // }
 
-    while (client.connected()) {
-        if (client.parseMessage() > 0) {
-            /* Read Message Constantly from the Server, only from our bot / DEI */
-            String parsed = parseMessage(client);
-            String command;
+    // while (client.connected()) {
+    //     if (client.parseMessage() > 0) {
+    //         /* Read Message Constantly from the Server, only from our bot / DEI */
+    //         String parsed = parseMessage(client);
+    //         String command;
 
-            if (parsed != "") {
-                client.beginMessage(TYPE_TEXT);
-                client.println(parsed + " Hoang Mai");
-                client.endMessage();    
-            }
+    //         if (parsed != "") {
+    //             client.beginMessage(TYPE_TEXT);
+    //             client.println(parsed + " Hoang Mai");
+    //             client.endMessage();    
+    //         }
 
-            /* Parse Message from Websocket depending on who sent it */
-            if (parsed.startsWith("PARTNER:")) {
-                command = parsed.substring(8); // strip "PARTNER:"
-            } else if (parsed.startsWith("SELF:")) {
-                command = parsed.substring(5);
-            }
+    //         /* Parse Message from Websocket depending on who sent it */
+    //         if (parsed.startsWith("PARTNER:")) {
+    //             command = parsed.substring(8); // strip "PARTNER:"
+    //         } else if (parsed.startsWith("SELF:")) {
+    //             command = parsed.substring(5);
+    //         }
             
-            /* Implement the State Logic */
-            int newState   = parseState(command);
-            if (newState >= STOP && newState <= TurnLeft) {
-                state = (States) newState;
-                Serial.print("Server set state to: ");
-                Serial.println(state);
-            }
-        }
-    }
+    //         /* Implement the State Logic */
+    //         int newState   = parseState(command);
+    //         if (newState >= STOP && newState <= TurnLeft) {
+    //             state = (States) newState;
+    //             Serial.print("Server set state to: ");
+    //             Serial.println(state);
+    //         }
+    //     }
+    // }
 
     Serial.println("disconnected");
 }
