@@ -202,7 +202,7 @@ void Motor::tankDrive(int speedLeft, int speedRight)
 */
 void Motor::followLane(Edge side, int lineColor, WebSocketClient &client)
 {
-    int currentStateColor = 0;
+    int currentStateColor = COLOR_RED;
     int currentColor = 0;
     int colorFeedback = 0;
 
@@ -235,10 +235,10 @@ void Motor::followLane(Edge side, int lineColor, WebSocketClient &client)
                     leftPower = boost;   // saw line, correct by driving left wheel
             }
 
-            Serial.print("Left Power: ");
-            Serial.println(leftPower);
-            Serial.print("Right Power: ");
-            Serial.println(rightPower);
+            // Serial.print("Left Power: ");
+            // Serial.println(leftPower);
+            // Serial.print("Right Power: ");
+            // Serial.println(rightPower);
 
             tankDrive(leftPower, rightPower);
             colorFeedback++;

@@ -21,7 +21,7 @@ static int ambientBaseline = 0;
 
 int training[4][4] = 
 {
-    {-15,   0,     0, COLOR_BLACK},
+    {0,   0,     0, COLOR_BLACK},
     {-235, -0,   0, COLOR_BLUE},
     {-80,   -20, -70, COLOR_YELLOW},
     {-20,   0,   -20, COLOR_RED}

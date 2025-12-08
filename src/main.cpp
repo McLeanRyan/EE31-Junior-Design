@@ -14,7 +14,9 @@
 char ssid[] = WIFI_NAME;
 char pass[] = WIFI_PASSWORD;
 char serverAddress[] = ADDRESS; // server address
-int port = 80;
+int port = 8080;
+// 80 - Josh
+// 8080 - Halligan
 
 WiFiClient wifi;
 WebSocketClient client = WebSocketClient(wifi, serverAddress, port);
@@ -73,9 +75,14 @@ void loop()
         Serial.println("Done Connecting");
         client.beginMessage(TYPE_TEXT);
         client.print(clientID);
+        client.println(" is connected");
         client.endMessage();
     }
     
+    while( true ){
+        state = (States) FollowLeft;
+        handleState(motor, state, client, COLOR_BLUE);     
+    }
     while (client.connected()) {
         if (client.parseMessage() > 0) {
             /* Read Message Constantly from the Server, only from our bot / DEI */
