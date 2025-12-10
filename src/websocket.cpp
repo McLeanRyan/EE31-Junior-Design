@@ -39,6 +39,8 @@ String parseMessage(WebSocketClient &client)
     for (char c : raw) {
         if (isPrintable(c)) message += c;
     }
+    Serial.println("Read: ");
+    Serial.println(message);
 
     /* Only process messages from *either* known bot IDs */
     if (message.startsWith(PARTNERBOT_ID)) {

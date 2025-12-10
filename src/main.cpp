@@ -6,6 +6,7 @@
 #include "state.h"
 #include "colorDetect.h"
 #include "soloDemo.h"
+#include "irDetect.h"
 
 /* SERVER CONFIGURATION */
 // wscat -c ws://10.5.12.14
@@ -21,7 +22,7 @@ int port = 8080;
 
 WiFiClient wifi;
 WebSocketClient client = WebSocketClient(wifi, serverAddress, port);
-String clientID = CLIENT_ID; //Insert your Server ID Here!
+String clientID = CLIENT_ID; 
 States state = STOP;
 
 void setup() {
@@ -30,6 +31,8 @@ void setup() {
 
     colorDetectSetup();
     initializeWifi(ssid, pass);
+    irDetectSetup(100);
+    client.begin();
 }
 
 int current_blue, current_yellow, current_red, current_class = 0;
@@ -67,54 +70,52 @@ void remoteCommanBotMotionsWithPartner()
 
 void loop() 
 {
-    while (!client.connected()) {
-        client.begin();
-        delay(100);
-    }
     
-    if (client.connected()) {
-        Serial.println("Done Connecting");
-        client.beginMessage(TYPE_TEXT);
-        client.print(clientID);
-        client.println(" is connected");
-        client.endMessage();
-    }
+    Serial.println("Done Connecting");
+    client.beginMessage(TYPE_TEXT);
+    client.print(clientID);
+    client.endMessage();
 
-    soloDemo(motor, client);
+    //soloDemo(motor, client);
     
+    while (true) {
+        detectDistance(10000);
+        delay(500);
+    }
     // while( true ) {
     //     state = (States) FollowLeft;
-    //     handleState(motor, state, client, COLOR_RED);     
-    // }
-
-    // while (client.connected()) {
-    //     if (client.parseMessage() > 0) {
-    //         /* Read Message Constantly from the Server, only from our bot / DEI */
-    //         String parsed = parseMessage(client);
-    //         String command;
-
-    //         if (parsed != "") {
-    //             client.beginMessage(TYPE_TEXT);
-    //             client.println(parsed + " Hoang Mai");
-    //             client.endMessage();    
-    //         }
-
-    //         /* Parse Message from Websocket depending on who sent it */
-    //         if (parsed.startsWith("PARTNER:")) {
-    //             command = parsed.substring(8); // strip "PARTNER:"
-    //         } else if (parsed.startsWith("SELF:")) {
-    //             command = parsed.substring(5);
-    //         }
-            
-    //         /* Implement the State Logic */
-    //         int newState   = parseState(command);
-    //         if (newState >= STOP && newState <= TurnLeft) {
-    //             state = (States) newState;
-    //             Serial.print("Server set state to: ");
-    //             Serial.println(state);
-    //         }
-    //     }
+    //     handleState(motor, state, client, COLOR_YELLOW);     
     // }
 
     Serial.println("disconnected");
+
+    while (client.connected()) {
+        if (client.parseMessage() > 0) {
+            /* Read Message Constantly from the Server, only from our bot / DEI */
+            String parsed = parseMessage(client);
+            String command;
+
+            if (parsed != "") {
+                client.beginMessage(TYPE_TEXT);
+                client.println(parsed + " Hoang Mai");
+                client.endMessage();    
+            }
+
+            /* Parse Message from Websocket depending on who sent it */
+            if (parsed.startsWith("PARTNER:")) {
+                command = parsed.substring(8); // strip "PARTNER:"
+            } else if (parsed.startsWith("SELF:")) {
+                command = parsed.substring(5);
+            }
+            
+            /* Implement the State Logic */
+            int newState   = parseState(command);
+            if (newState >= STOP && newState <= TurnLeft) {
+                state = (States) newState;
+                Serial.print("Server set state to: ");
+                Serial.println(state);
+            }
+        }
+    }
 }
+

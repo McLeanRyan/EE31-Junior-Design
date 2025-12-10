@@ -50,7 +50,7 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // ---------------------------------------------------------
             case DRIVE_TO_FIRST_WALL:
                 motor.driveForward(180);
-                if (detectDistance(-400)) {    // Wall detected
+                if (detectDistance(400)) {    // Wall detected
                     motor.stop();
                     delay(300);
                     demo = PIVOT_AROUND;
