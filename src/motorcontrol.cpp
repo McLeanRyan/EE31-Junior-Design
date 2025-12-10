@@ -157,7 +157,7 @@ void Motor::rightTurn(int turnRadius) {
     stop();
 }
 
-void gyroDrive(int speed, int delay) 
+void Motor::gyroDrive(int speed, int delay) 
 {
     digitalWrite(LEFT_CW, HIGH);
     digitalWrite(LEFT_CC, LOW);
@@ -202,38 +202,37 @@ void gyroDrive(int speed, int delay)
     }
 }
 
-void gyroTurn(double angle) 
+void Motor::gyroTurn(double angle) 
 {
-    double kP = 1;
+    Serial.println("Entered Gyro Turn");
+    double kP = 2;
     double kI = 0;
     double kD = 0;
     double kDrive = 1; // Scale output of PID controller to pass as speed
-    int baseSpeed = 100;
+    int baseSpeed = 90;
 
-    float gx = 0.0f, gy = 0.0f, gz = 0.0f;
-    if (!imuRead(gx, gy, gz)) {
-        return; // can't read imu, abort
-    }
+    imuZeroHeading();
+    double current = imuGetHeading();
 
-    double target = angle + double(gz); //REPLACE 0 WITH GYRO READING AT START
+    double target = angle;
     double totalError, previousError, changeError, PIDOut = 0;
     double e = 100;
     int lastTime = 0;
 
-    while(abs(e) > 0.1) {
-        if (!imuRead(gx, gy, gz)) {
-            continue;
-        }
+    while(abs(e) >= 3) {
+        imuUpdateHeading();
+        double current = imuGetHeading();
 
         unsigned long now = millis();
         double dt = (now - lastTime) / 1000.0;  // Convert to seconds
 
-        e = target -double(gz); // REPLACE 0 WITH CURRENT GYRO READING
+        e = target -double(current); // REPLACE 0 WITH CURRENT GYRO READING
         totalError += (e * dt);
         changeError = (e - previousError) / dt;
-        PIDOut = kDrive * ((kP * e) + (kI * totalError) + (kD * changeError));
-        
-        if (e > 0) {
+        PIDOut = abs(kDrive * ((kP * e) + (kI * totalError) + (kD * changeError)));
+        PIDOut = constrain(PIDOut, baseSpeed, 255);
+        Serial.println(e);
+        if (e < 0) {
             digitalWrite(LEFT_CW, LOW);
             digitalWrite(LEFT_CC, HIGH);
             digitalWrite(RIGHT_CW, HIGH);
@@ -241,7 +240,7 @@ void gyroTurn(double angle)
 
             analogWrite(LEFT_ENABLE, PIDOut);
             analogWrite(RIGHT_ENABLE, PIDOut);
-        }else if (e < 0){
+        }else if (e > 0){
             digitalWrite(LEFT_CW, HIGH);
             digitalWrite(LEFT_CC, LOW);
             digitalWrite(RIGHT_CW, LOW);
@@ -253,6 +252,8 @@ void gyroTurn(double angle)
         previousError = e;
         lastTime = now;
     }
+    analogWrite(LEFT_ENABLE, 0);
+    analogWrite(RIGHT_ENABLE, 0);
 }
 
 

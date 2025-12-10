@@ -5,6 +5,7 @@
 #include "motorcontrol.h"
 #include "state.h"
 #include "colorDetect.h"
+#include "imu.h"
 
 /* SERVER CONFIGURATION */
 // wscat -c ws://10.5.12.14
@@ -37,6 +38,10 @@ void setup() {
     colorDetectSetup();
 
     initializeWifi(ssid, pass);
+
+    imuSetup();
+
+    
 }
 
 int current_blue, current_yellow, current_red, current_class = 0;
@@ -82,6 +87,12 @@ void remoteCommanBotMotionsWithPartner() {
 
 void loop() {
     delay(100);
+
+    while(1){
+        state = States(GyroTurn);
+        handleState(motor, state);
+        delay(10000);
+    }
 
     if (!client.connected()) {
         client.begin();

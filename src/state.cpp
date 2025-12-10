@@ -45,6 +45,9 @@ void handleState(Motor &motor, States state)
             motor.rightTurn(150);
             break;
 
+        case GyroTurn:
+            motor.gyroTurn(90);
+            break;
         default:
             motor.stop();
             break;

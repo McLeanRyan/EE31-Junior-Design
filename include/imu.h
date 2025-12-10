@@ -10,4 +10,8 @@ bool imuSetup();
 // Returns true if read was successful.
 bool imuRead(float &gx, float &gy, float &gz);
 
+void imuUpdateHeading();
+float imuGetHeading();
+void imuZeroHeading();
+
 #endif
