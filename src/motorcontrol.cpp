@@ -9,6 +9,7 @@
 #include "motorcontrol.h"
 #include <ArduinoHttpClient.h>
 #include "colorDetect.h"
+#include "irDetect.h"
 
 #define LEFT_ENABLE 9
 #define LEFT_CC 7
@@ -65,7 +66,7 @@ void Motor::driveForward(int speed)
     digitalWrite(RIGHT_CW, HIGH);
     digitalWrite(RIGHT_CC, LOW);
 
-    analogWrite(LEFT_ENABLE, speed);
+    analogWrite(LEFT_ENABLE, speed+30);
     analogWrite(RIGHT_ENABLE, speed);
 }
 
@@ -209,7 +210,7 @@ void Motor::followLane(Edge side, int lineColor, WebSocketClient &client)
     int baseSpeed = 120;
     int kLine = 1;
 
-    while (true) {
+    while (!detectDistance(-280)) {
         currentColor = detectColorClass(5);
         //printColor(client, currentColor);
 
@@ -276,7 +277,7 @@ void Motor::followRight(int lineColor, WebSocketClient &client)
 
     // Line Following Control
     while (true) { // In future, replace with distance sensor instead of true
-        currentColor = detectColorClass(25);
+        currentColor = detectColorClass(5);
 
         printColor(client, currentColor);
         /* Print Current Color */

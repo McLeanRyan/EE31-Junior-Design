@@ -49,9 +49,8 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // 1. Drive Forward until Wall
             // ---------------------------------------------------------
             case DRIVE_TO_FIRST_WALL:
-                if (!detectDistance(180)) {
-                    motor.driveForward(180);
-                } else {
+                motor.driveForward(180);
+                if(detectDistance(-370)) {
                     delay(100);
                     motor.stop();
                     demo  = PIVOT_AROUND;
@@ -62,8 +61,8 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // 2. Pivot 170–180 degrees
             // ---------------------------------------------------------
             case PIVOT_AROUND:
-                motor.pivotCCW();
-                delay(900);        // Tune experimentally
+                motor.pivotCW();
+                delay(1400);        // Tune experimentally
                 motor.stop();
                 demo = DRIVE_TO_RED;
                 break;
@@ -74,11 +73,14 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             case DRIVE_TO_RED:
             {
                 motor.driveForward(180);
-                int c = detectColorClass(25);
+                int c = detectColorClass(5);
                 if (c == COLOR_RED) { 
-                    motor.stop();
-                    delay(300);
-                    demo = TURN_LEFT_AT_RED;
+                    c = detectColorClass(5);
+                    if (c == COLOR_RED) {
+                        motor.stop();
+                        delay(300);
+                        demo = TURN_LEFT_AT_RED;
+                    }
                 }
                 break;
             }
@@ -88,7 +90,7 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // ---------------------------------------------------------
             case TURN_LEFT_AT_RED:
                 motor.pivotCCW();
-                delay(300);
+                delay(900);
                 motor.stop();
                 demo = FOLLOW_RED_TO_WALL;
                 break;
@@ -98,7 +100,7 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // ---------------------------------------------------------
             case FOLLOW_RED_TO_WALL:
                 motor.followLane(LEFT_EDGE, COLOR_RED, client);  // 3 = Red
-                if (detectDistance(180)) {
+                if (detectDistance(-280)) {
                     motor.stop();
                     demo = TURN_LEFT_AFTER_RED_WALL;
                 }
@@ -109,7 +111,7 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // ---------------------------------------------------------
             case TURN_LEFT_AFTER_RED_WALL:
                 motor.pivotCCW();
-                delay(300);
+                delay(900);
                 motor.stop();
                 demo = DRIVE_TO_YELLOW;
                 break;
@@ -120,11 +122,14 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             case DRIVE_TO_YELLOW:
             {
                 motor.driveForward(180);
-                int c = detectColorClass(25);
+                int c = detectColorClass(5);
                 if (c == COLOR_YELLOW) {
-                    motor.stop();
-                    delay(300);
-                    demo = TURN_LEFT_AT_YELLOW;
+                    c = detectColorClass(5);
+                    if (c == COLOR_YELLOW) {
+                        motor.stop();
+                        delay(300);
+                        demo = TURN_LEFT_AT_YELLOW;
+                    }
                 }
                 break;
             }
@@ -134,7 +139,7 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // ---------------------------------------------------------
             case TURN_LEFT_AT_YELLOW:
                 motor.pivotCCW();
-                delay(300);
+                delay(900);
                 motor.stop();
                 demo = FOLLOW_YELLOW_TO_WALL;
                 break;
@@ -143,12 +148,10 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // 9. Follow Yellow until Wall
             // ---------------------------------------------------------
             case FOLLOW_YELLOW_TO_WALL:
-                if (!detectDistance(180)) {
-                    motor.followLane(LEFT_EDGE, COLOR_YELLOW, client);  
-                } else {
+                motor.followLane(LEFT_EDGE, COLOR_YELLOW, client);  // 3 = Red
+                if (detectDistance(-300)) {
                     motor.stop();
-                    delay(100);
-                    demo  = TURN_LEFT_FINAL;
+                    demo = TURN_LEFT_FINAL;
                 }
                 break;
 
@@ -156,8 +159,8 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // 10. Turn Left 90°
             // ---------------------------------------------------------
             case TURN_LEFT_FINAL:
-                motor.turnLeft(150);
-                delay(300);
+                motor.pivotCCW();
+                delay(900);
                 motor.stop();
                 demo = RETURN_TO_START;
                 break;
@@ -166,11 +169,10 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // 11. Drive back to Start
             // ---------------------------------------------------------
             case RETURN_TO_START:
-                if (!detectDistance(180)) {
-                    motor.driveForward(180);
-                } else {
-                    motor.stop();
+                motor.driveForward(180);
+                if(detectDistance(-370)) {
                     delay(100);
+                    motor.stop();
                     demo  = DEMO_DONE;
                 }
                 break;

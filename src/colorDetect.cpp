@@ -23,8 +23,8 @@ int training[4][4] =
 {
     {-60,   0,     0, COLOR_BLACK},
     {-235, -0,   0, COLOR_BLUE},
-    {-80,   -20, -70, COLOR_YELLOW},
-    {-60,   0,   -50, COLOR_RED}
+    {-80,   -20, -80, COLOR_YELLOW},
+    {-60,   0,   -40, COLOR_RED}
 };
 
 int med_blue[5];
@@ -78,6 +78,14 @@ int detectColorClass(int delayMs)
     current_blue   = median5(med_blue[0], med_blue[1], med_blue[2], med_blue[3], med_blue[4]);
     current_yellow = median5(med_yellow[0], med_yellow[1], med_yellow[2], med_yellow[3], med_yellow[4]);
     current_red    = median5(med_red[0], med_red[1], med_red[2], med_red[3], med_red[4]);
+
+    // FOR DEBUGGING/RECALIBRATION
+    // Serial.print("blue: ");
+    // Serial.println(current_blue);
+    // Serial.print("yellow: ");
+    // Serial.println(current_yellow);
+    // Serial.print("red: ");
+    // Serial.println(current_red);
 
     return calculateClass(current_blue, current_yellow, current_red);
 }

@@ -31,7 +31,7 @@ void irDetectSetup(int delayMs) {
 bool detectDistance(int threshold) {
     int current_distance = analogRead(PIN_SENSOR) - ambient;
 
-    //Serial.println(current_distance); // Debug Statement
+    // Serial.println(current_distance); // Debug Statement
 
     return current_distance < threshold; //distance readings are negative
 }

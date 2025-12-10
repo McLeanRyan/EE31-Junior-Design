@@ -23,6 +23,7 @@ int port = 8080;
 WiFiClient wifi;
 WebSocketClient client = WebSocketClient(wifi, serverAddress, port);
 String clientID = CLIENT_ID; 
+Motor motor;
 
 void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
@@ -35,10 +36,9 @@ void setup() {
 }
 
 int current_blue, current_yellow, current_red, current_class = 0;
-Motor motor;
 
-void remoteCommanBotMotionsWithPartner() 
-{
+// void remoteCommanBotMotionsWithPartner() 
+// {
     // while (client.connected()) {
     //     if (client.parseMessage() > 0) {
 
@@ -65,7 +65,7 @@ void remoteCommanBotMotionsWithPartner()
     //         }
     //     }
     // }
-}
+// }
 
 void loop() 
 {
@@ -74,13 +74,8 @@ void loop()
     client.beginMessage(TYPE_TEXT);
     client.print(clientID);
     client.endMessage();
-
-    soloDemo(motor, client);
     
-    // while( true ) {
-    //     state = (States) FollowLeft;
-    //     handleState(motor, state, client, COLOR_YELLOW);     
-    // }
+    soloDemo(motor, client);
 
     messageState(client);
 
