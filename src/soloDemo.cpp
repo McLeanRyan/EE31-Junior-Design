@@ -49,11 +49,12 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // 1. Drive Forward until Wall
             // ---------------------------------------------------------
             case DRIVE_TO_FIRST_WALL:
-                motor.driveForward(180);
-                if (detectDistance(400)) {    // Wall detected
+                if (!detectDistance(180)) {
+                    motor.driveForward(180);
+                } else {
+                    delay(100);
                     motor.stop();
-                    delay(300);
-                    demo = PIVOT_AROUND;
+                    demo  = PIVOT_AROUND;
                 }
                 break;
 
@@ -97,7 +98,7 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // ---------------------------------------------------------
             case FOLLOW_RED_TO_WALL:
                 motor.followLane(LEFT_EDGE, COLOR_RED, client);  // 3 = Red
-                if (detectDistance(-400)) {
+                if (detectDistance(180)) {
                     motor.stop();
                     demo = TURN_LEFT_AFTER_RED_WALL;
                 }
@@ -142,10 +143,12 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // 9. Follow Yellow until Wall
             // ---------------------------------------------------------
             case FOLLOW_YELLOW_TO_WALL:
-                motor.followLane(LEFT_EDGE, COLOR_YELLOW, client);  
-                if (detectDistance(-400)) {
+                if (!detectDistance(180)) {
+                    motor.followLane(LEFT_EDGE, COLOR_YELLOW, client);  
+                } else {
                     motor.stop();
-                    demo = TURN_LEFT_FINAL;
+                    delay(100);
+                    demo  = TURN_LEFT_FINAL;
                 }
                 break;
 
@@ -163,10 +166,12 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // 11. Drive back to Start
             // ---------------------------------------------------------
             case RETURN_TO_START:
-                motor.driveForward(180);
-                if (detectDistance(-400)) {  // Assume start has a wall
+                if (!detectDistance(180)) {
+                    motor.driveForward(180);
+                } else {
                     motor.stop();
-                    demo = DEMO_DONE;
+                    delay(100);
+                    demo  = DEMO_DONE;
                 }
                 break;
 

@@ -9,7 +9,7 @@
 #include "colorDetect.h"
 #include "websocket.h"
 
-enum DemoState {
+enum PartnerDemoState {
     DRIVE_TO_FIRST_WALL,
     PIVOT_AROUND,
     DRIVE_TO_RED,
@@ -27,7 +27,7 @@ enum DemoState {
 
 void partnerDemo(Motor &motor, States state, WebSocketClient &client, int lineColor)
 {
-    DemoState demo = DRIVE_TO_FIRST_WALL;
+    PartnerDemoState demo = DRIVE_TO_FIRST_WALL;
     client.beginMessage(TYPE_TEXT);
     client.println("beep");
     client.endMessage();

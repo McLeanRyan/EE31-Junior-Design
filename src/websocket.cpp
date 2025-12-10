@@ -8,6 +8,7 @@
  */
 #include "websocket.h"
 #include <WiFiNINA.h>
+#include "state.h"
 
 /*  initializeWifi
     Description:    Initialize connecting to the wifi
@@ -27,6 +28,41 @@ void initializeWifi(char ssid[], char pass[])
     }
     Serial.print("Done\n");
 }
+
+void messageState(WebSocketClient &client)
+{
+    States state = STOP;
+    while (client.connected()) {
+        if (client.parseMessage() > 0) {
+            /* Read Message Constantly from the Server, only from our bot / DEI */
+            String parsed = parseMessage(client);
+            String command;
+
+            if (parsed != "") {
+                client.beginMessage(TYPE_TEXT);
+                client.println(parsed + " Hoang Mai");
+                client.endMessage();    
+            }
+
+            /* Parse Message from Websocket depending on who sent it */
+            if (parsed.startsWith("PARTNER:")) {
+                command = parsed.substring(8); // strip "PARTNER:"
+            } else if (parsed.startsWith("SELF:")) {
+                command = parsed.substring(5);
+            }
+            
+            /* Implement the State Logic */
+            int newState   = parseState(command);
+            if (newState >= STOP && newState <= TurnLeft) {
+                state = (States) newState;
+                Serial.print("Server set state to: ");
+                Serial.println(state);
+            }
+        }
+    }
+}
+
+
 
 String parseMessage(WebSocketClient &client)
 {
@@ -61,6 +97,7 @@ String parseMessage(WebSocketClient &client)
 
     return "";
 }
+
 
 /*  parseState
     Description:    Read the State from a given message from the Server

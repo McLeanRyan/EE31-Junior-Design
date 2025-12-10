@@ -10,9 +10,19 @@ static int ambient;
 void irDetectSetup(int delayMs) {
     pinMode(PIN_IR_LED, OUTPUT);
     digitalWrite(PIN_IR_LED, LOW);
-    delay(delayMs);
-    ambient = analogRead(PIN_SENSOR);
-    delay(delayMs);
+
+    delay(50); // settle
+
+    long sum = 0;
+    for(int i = 0; i < 10; i++){
+        sum += analogRead(PIN_SENSOR);
+        delay(5);
+    }
+    ambient = sum / 10;
+    Serial.println("Ambient is :");
+    Serial.println(ambient);
+    
+
     digitalWrite(PIN_IR_LED, HIGH);
 }
 
@@ -20,6 +30,8 @@ void irDetectSetup(int delayMs) {
 // false otherwise
 bool detectDistance(int threshold) {
     int current_distance = analogRead(PIN_SENSOR) - ambient;
-    Serial.println(current_distance);
+
+    //Serial.println(current_distance); // Debug Statement
+
     return current_distance < threshold; //distance readings are negative
 }
