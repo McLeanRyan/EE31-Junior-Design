@@ -48,6 +48,12 @@ void handleState(Motor &motor, States state)
         case GyroTurn:
             motor.gyroTurn(90);
             break;
+        case GyroToLine:
+            motor.gyroDriveToLine(140, 1);
+            break;
+        case GyroToWall:
+            motor.gyroDriveToWall(140, -370);
+            break;
         default:
             motor.stop();
             break;

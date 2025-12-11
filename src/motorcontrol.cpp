@@ -9,6 +9,8 @@
 #include "motorcontrol.h"
 #include <ArduinoHttpClient.h>
 #include "imu.h"
+#include "colorDetect.h"
+#include "irDetect.h"
 
 #define LEFT_ENABLE 9
 #define LEFT_CC 7
@@ -157,35 +159,80 @@ void Motor::rightTurn(int turnRadius) {
     stop();
 }
 
-void Motor::gyroDrive(int speed, int delay) 
+void Motor::gyroDriveToLine(int speed, int color) 
 {
     digitalWrite(LEFT_CW, HIGH);
     digitalWrite(LEFT_CC, LOW);
     digitalWrite(RIGHT_CW, HIGH);
     digitalWrite(RIGHT_CC, LOW);
 
-    double kP = 1;
+    double kP = 2;
     double kI = 0;
     double kD = 0;
 
-    float gx = 0.0f, gy = 0.0f, gz = 0.0f;
-    if (!imuRead(gx, gy, gz)) {
-        return; // can't read imu, abort
-    }
+    imuZeroHeading();
+    double current = imuGetHeading();
 
-    double target = double(gz); //REPLACE 0 WITH GYRO READING AT START
+    double target = current; //REPLACE 0 WITH GYRO READING AT START
     double totalError, previousError, changeError, PIDOut = 0;
     int lastTime = 0;
 
-    for (int i = 0; i<delay; i++) {
-        if (!imuRead(gx, gy, gz)) {
-            continue;
-        }
+    int currentColor = detectColorClass(5);
+    while(!currentColor == color)
+    {
+        imuUpdateHeading();
+        current = imuGetHeading();
 
         unsigned long now = millis();
         double dt = (now - lastTime) / 1000.0;  // Convert to seconds
 
-        double e = target - double(gz); // REPLACE 0 WITH CURRENT GYRO READING
+        double e = target - double(current); // REPLACE 0 WITH CURRENT GYRO READING
+        totalError += (e*dt);
+        changeError = (e - previousError)/dt;
+        PIDOut = (kP * e) + (kI * totalError) + (kD * changeError);
+        
+        if (e > 0) {
+            analogWrite(LEFT_ENABLE, speed + PIDOut);
+            analogWrite(RIGHT_ENABLE, speed - PIDOut);
+        }else if (e < 0){
+            analogWrite(LEFT_ENABLE, speed - PIDOut);
+            analogWrite(RIGHT_ENABLE, speed + PIDOut);
+        }
+        previousError = e;
+        lastTime = now;
+        currentColor = detectColorClass(5);
+    }
+    analogWrite(LEFT_ENABLE, 0);
+    analogWrite(RIGHT_ENABLE, 0);
+}
+
+void Motor::gyroDriveToWall(int speed, int distance) 
+{
+    digitalWrite(LEFT_CW, HIGH);
+    digitalWrite(LEFT_CC, LOW);
+    digitalWrite(RIGHT_CW, HIGH);
+    digitalWrite(RIGHT_CC, LOW);
+
+    double kP = 2;
+    double kI = 0;
+    double kD = 0;
+
+    imuZeroHeading();
+    double current = imuGetHeading();
+
+    double target = current; //REPLACE 0 WITH GYRO READING AT START
+    double totalError, previousError, changeError, PIDOut = 0;
+    int lastTime = 0;
+
+    while(!detectDistance(distance))
+    {
+        imuUpdateHeading();
+        current = imuGetHeading();
+
+        unsigned long now = millis();
+        double dt = (now - lastTime) / 1000.0;  // Convert to seconds
+
+        double e = target - double(current); // REPLACE 0 WITH CURRENT GYRO READING
         totalError += (e*dt);
         changeError = (e - previousError)/dt;
         PIDOut = (kP * e) + (kI * totalError) + (kD * changeError);
@@ -200,11 +247,13 @@ void Motor::gyroDrive(int speed, int delay)
         previousError = e;
         lastTime = now;
     }
+    analogWrite(LEFT_ENABLE, 0);
+    analogWrite(RIGHT_ENABLE, 0);
 }
 
 void Motor::gyroTurn(double angle) 
 {
-    Serial.println("Entered Gyro Turn");
+    // Serial.println("Entered Gyro Turn");
     double kP = 2;
     double kI = 0;
     double kD = 0;
@@ -231,7 +280,7 @@ void Motor::gyroTurn(double angle)
         changeError = (e - previousError) / dt;
         PIDOut = abs(kDrive * ((kP * e) + (kI * totalError) + (kD * changeError)));
         PIDOut = constrain(PIDOut, baseSpeed, 255);
-        Serial.println(e);
+        // Serial.println(e);
         if (e < 0) {
             digitalWrite(LEFT_CW, LOW);
             digitalWrite(LEFT_CC, HIGH);

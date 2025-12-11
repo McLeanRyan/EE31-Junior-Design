@@ -11,7 +11,9 @@ enum States {
     PivotCounterClockwise,
     TurnRight,
     TurnLeft,
-    GyroTurn
+    GyroTurn,
+    GyroToLine,
+    GyroToWall
 };
 
 class Motor;

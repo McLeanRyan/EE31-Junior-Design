@@ -23,8 +23,10 @@ public:
     void pivotCCW();
     void rightTurn(int turnRadius);
     void leftTurn(int turnRadius);
-    void gyroDrive(int speed, int delay);
+    void gyroDriveToLine(int speed, int color);
+    void gyroDriveToWall(int speed, int distance);
     void gyroTurn(double angle);
+    
 
 private:
 };

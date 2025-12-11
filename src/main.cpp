@@ -89,7 +89,7 @@ void loop() {
     delay(100);
 
     while(1){
-        state = States(GyroTurn);
+        state = States(GyroToWall);
         handleState(motor, state);
         delay(10000);
     }
