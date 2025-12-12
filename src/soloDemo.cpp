@@ -49,21 +49,24 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // 1. Drive Forward until Wall
             // ---------------------------------------------------------
             case DRIVE_TO_FIRST_WALL:
-                motor.driveForward(180);
-                if(detectDistance(-370)) {
-                    delay(100);
-                    motor.stop();
-                    demo  = PIVOT_AROUND;
-                }
+                // motor.driveForward(180);
+                // if(detectDistance(-370)) {
+                //     delay(100);
+                //     motor.stop();
+                //     demo  = PIVOT_AROUND;
+                // }
+                motor.gyroDriveToWall(180, -370);
+                demo  = PIVOT_AROUND;
                 break;
 
             // ---------------------------------------------------------
             // 2. Pivot 170–180 degrees
             // ---------------------------------------------------------
             case PIVOT_AROUND:
-                motor.pivotCW();
-                delay(1400);        // Tune experimentally
-                motor.stop();
+                // motor.pivotCW();
+                // delay(1500);        // Tune experimentally
+                // motor.stop();
+                motor.gyroTurn(170);
                 demo = DRIVE_TO_RED;
                 break;
 

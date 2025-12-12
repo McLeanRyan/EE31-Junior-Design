@@ -32,6 +32,9 @@ public:
     void followLane(Edge Side, int lineColor, WebSocketClient &client);
     void followLeft(int lineColor, WebSocketClient &client);
     void followRight(int lineColor, WebSocketClient &client);
+    void gyroTurn(double angle);
+    void gyroDriveToLine(int speed, int color);
+    void gyroDriveToWall(int speed, int distance);
     
 private:
 };

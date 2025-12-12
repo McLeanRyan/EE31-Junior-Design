@@ -23,7 +23,7 @@ int training[4][4] =
 {
     {-60,   0,     0, COLOR_BLACK},
     {-235, -0,   0, COLOR_BLUE},
-    {-80,   -20, -80, COLOR_YELLOW},
+    {-85,   -25, -85, COLOR_YELLOW},
     {-60,   0,   -40, COLOR_RED}
 };
 

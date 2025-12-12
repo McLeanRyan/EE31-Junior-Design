@@ -7,6 +7,7 @@
 #include "colorDetect.h"
 #include "soloDemo.h"
 #include "irDetect.h"
+#include "imu.h"
 
 /* SERVER CONFIGURATION */
 // wscat -c ws://10.5.12.14
@@ -33,6 +34,7 @@ void setup() {
     initializeWifi(ssid, pass);
     irDetectSetup(100);
     client.begin();
+    imuSetup();
 }
 
 int current_blue, current_yellow, current_red, current_class = 0;
