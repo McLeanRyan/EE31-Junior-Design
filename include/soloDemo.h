@@ -11,5 +11,6 @@
 #include "state.h"
 
 void soloDemo(Motor &motor, WebSocketClient &client);
-    
+void mirrorDemo(Motor &motor, WebSocketClient &client);
+
 #endif
