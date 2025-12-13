@@ -52,14 +52,14 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // 1. Drive Forward until Wall
             // ---------------------------------------------------------
             case DRIVE_TO_FIRST_WALL:
-                // motor.driveForward(180);
-                // if(detectDistance(-370)) {
-                //     delay(100);
-                //     motor.stop();
-                //     demo  = PIVOT_AROUND;
-                // }
-                motor.gyroDriveToWall(180, -370);
-                demo  = PIVOT_AROUND;
+                motor.driveForward(180);
+                if(detectDistance(-370)) {
+                    delay(100);
+                    motor.stop();
+                    demo  = PIVOT_AROUND;
+                }
+                // motor.gyroDriveToWall(180, -370);
+                // demo  = PIVOT_AROUND;
                 break;
 
             // ---------------------------------------------------------
@@ -106,7 +106,7 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // ---------------------------------------------------------
             case FOLLOW_RED_TO_WALL:
                 motor.followLane(LEFT_EDGE, COLOR_RED, client);  // 3 = Red
-                if (detectDistance(-280)) {
+                if (detectDistance(-300)) {
                     motor.stop();
                     demo = TURN_LEFT_AFTER_RED_WALL;
                 }

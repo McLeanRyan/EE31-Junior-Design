@@ -211,7 +211,7 @@ void Motor::followLane(Edge side, int lineColor, WebSocketClient &client)
     int baseSpeed = 120;
     int kLine = 1;
 
-    while (!detectDistance(-280)) {
+    while (!detectDistance(-300)) {
         currentColor = detectColorClass(5);
         //printColor(client, currentColor);
 

@@ -8,6 +8,7 @@
 #include "soloDemo.h"
 #include "irDetect.h"
 #include "imu.h"
+#include "jointDemo.h"
 
 /* SERVER CONFIGURATION */
 // wscat -c ws://10.5.12.14
@@ -17,7 +18,7 @@
 char ssid[] = WIFI_NAME;
 char pass[] = WIFI_PASSWORD;
 char serverAddress[] = ADDRESS; // server address
-int port = 8080;
+int port = 80;
 // 80 - Josh
 // 8080 - Halligan
 
@@ -76,8 +77,15 @@ void loop()
     client.beginMessage(TYPE_TEXT);
     client.print(clientID);
     client.endMessage();
+    client.beginMessage(TYPE_TEXT);
+    client.print("Server Connected!");
+    client.endMessage();
+    // while(true) {
+    //     detectColorClass(5);
+    // }
     
-    soloDemo(motor, client);
+    // soloDemo(motor, client);
+    jointDemo(motor, client);
 
     messageState(client);
 

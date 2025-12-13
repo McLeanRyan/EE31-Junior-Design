@@ -48,7 +48,7 @@ enum JointState {
 
 void jointDemo(Motor &motor, WebSocketClient &client)
 {
-    JointState demo = WAIT_FOR_RED;
+    JointState demo = DRIVE_TO_FIRST_WALL; //WAIT_FOR_RED;
 
     while (client.connected() && demo != DEMO_DONE)
     {
@@ -58,14 +58,14 @@ void jointDemo(Motor &motor, WebSocketClient &client)
             // 1. Drive Forward until Wall
             // ---------------------------------------------------------
             case DRIVE_TO_FIRST_WALL:
-                // motor.driveForward(180);
-                // if(detectDistance(-370)) {
-                //     delay(100);
-                //     motor.stop();
-                //     demo  = PIVOT_AROUND;
-                // }
-                motor.gyroDriveToWall(180, -370);
-                demo  = PIVOT_AROUND;
+                motor.driveForward(180);
+                if(detectDistance(-370)) {
+                    delay(100);
+                    motor.stop();
+                    demo  = PIVOT_AROUND;
+                }
+                // motor.gyroDriveToWall(180, -370);
+                // demo  = PIVOT_AROUND;
                 break;
 
             // ---------------------------------------------------------
@@ -116,7 +116,7 @@ void jointDemo(Motor &motor, WebSocketClient &client)
             // ---------------------------------------------------------
             case FOLLOW_RED_TO_WALL:
                 motor.followLane(LEFT_EDGE, COLOR_RED, client);  
-                if (detectDistance(-280)) {
+                if (detectDistance(-300)) {
                     motor.stop();
                     demo = TURN_LEFT_AFTER_RED_WALL;
                 }
@@ -175,6 +175,7 @@ void jointDemo(Motor &motor, WebSocketClient &client)
                             if (command == "State: Blue") {
                                 demo = FOLLOW_YELLOW_TO_WALL;
                                 messageReceived = true;
+                                break;
                             }
                         }
                         delay(50);
@@ -186,6 +187,9 @@ void jointDemo(Motor &motor, WebSocketClient &client)
             // 10. Follow Yellow until Wall
             // ---------------------------------------------------------
             case FOLLOW_YELLOW_TO_WALL:
+                client.beginMessage(TYPE_TEXT);
+                client.print("following yellow");
+                client.endMessage();
                 motor.followLane(LEFT_EDGE, COLOR_YELLOW, client); 
                 if (detectDistance(-300)) {
                     motor.stop();
@@ -260,14 +264,14 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
             // 1. Drive Forward until Wall
             // ---------------------------------------------------------
             case DRIVE_TO_FIRST_WALL:
-                // motor.driveForward(180);
-                // if(detectDistance(-370)) {
-                //     delay(100);
-                //     motor.stop();
-                //     demo  = PIVOT_AROUND;
-                // }
-                motor.gyroDriveToWall(180, -370);
-                demo  = PIVOT_AROUND;
+                motor.driveForward(180);
+                if(detectDistance(-370)) {
+                    delay(100);
+                    motor.stop();
+                    demo  = PIVOT_AROUND;
+                }
+                // motor.gyroDriveToWall(180, -370);
+                // demo  = PIVOT_AROUND;
                 break;
 
             // ---------------------------------------------------------
@@ -318,7 +322,7 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
             // ---------------------------------------------------------
             case FOLLOW_BLUE_TO_WALL:
                 motor.followLane(LEFT_EDGE, COLOR_BLUE, client);  
-                if (detectDistance(-280)) {
+                if (detectDistance(-300)) {
                     motor.stop();
                     demo = TURN_LEFT_AFTER_BLUE_WALL;
                 }
