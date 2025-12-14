@@ -164,24 +164,23 @@ void jointDemo(Motor &motor, WebSocketClient &client)
             // 9. Wait for Blue Command
             // --------------------------------------------------------- 
             case WAIT_FOR_BLUE:
-                bool messageReceived = false;
-                while (!messageReceived) {
-                    if (client.parseMessage() > 0) 
-                    {
-                        String parsed = parseMessage(client);
-                        Serial.println(parsed);
-                        if (parsed.startsWith("PARTNER:")) {
-                            String command = parsed.substring(8); // strip "PARTNER:"
-                            if (command == "State: Blue") {
-                                demo = FOLLOW_YELLOW_TO_WALL;
-                                messageReceived = true;
-                                break;
-                            }
+            {
+                if (client.parseMessage() > 0) {
+                    String parsed = parseMessage(client);
+                    Serial.println(parsed);
+
+                    if (parsed.startsWith("PARTNER:")) {
+                        String command = parsed.substring(8);
+                        command.trim();
+
+                        if (command == "State: Blue") {
+                            demo = FOLLOW_YELLOW_TO_WALL;
                         }
-                        delay(50);
                     }
                 }
                 break;
+            }
+
 
             // ---------------------------------------------------------
             // 10. Follow Yellow until Wall
@@ -233,7 +232,7 @@ void jointDemo(Motor &motor, WebSocketClient &client)
 
 void mirrorJointDemo(Motor &motor, WebSocketClient &client)
 {
-    JointState demo = DRIVE_TO_FIRST_WALL;
+    JointState demo = WAIT_FOR_RED;
 
     while (client.connected() && demo != DEMO_DONE)
     {
@@ -243,23 +242,22 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
             // 0. Wait for Red From Other Group
             // ---------------------------------------------------------
             case WAIT_FOR_RED:
-                bool messageReceived = false;
-                while (!messageReceived) {
-                    if (client.parseMessage() > 0) 
-                    {
-                        String parsed = parseMessage(client);
-                        Serial.println(parsed);
-                        if (parsed.startsWith("PARTNER:")) {
-                            String command = parsed.substring(8); // strip "PARTNER:"
-                            if (command == "State: Red") {
-                                demo = DRIVE_TO_FIRST_WALL;
-                                messageReceived = true;
-                            }
+            {
+                if (client.parseMessage() > 0) {
+                    String parsed = parseMessage(client);
+                    Serial.println(parsed);
+
+                    if (parsed.startsWith("PARTNER:")) {
+                        String command = parsed.substring(8);
+                        command.trim();
+
+                        if (command == "State: Red") {
+                            demo = DRIVE_TO_FIRST_WALL;
                         }
-                        delay(50);
                     }
                 }
-                break;        
+                break;
+            }
             // ---------------------------------------------------------
             // 1. Drive Forward until Wall
             // ---------------------------------------------------------
@@ -342,22 +340,22 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
             // 6.5 Pivot CCW 90°
             // ---------------------------------------------------------
             case WAIT_FOR_YELLOW:
-                    while (!messageReceived) {
-                    if (client.parseMessage() > 0) 
-                    {
-                        String parsed = parseMessage(client);
-                        Serial.println(parsed);
-                        if (parsed.startsWith("PARTNER:")) {
-                            String command = parsed.substring(8); // strip "PARTNER:"
-                            if (command == "State: Done") {
-                                demo = DRIVE_TO_YELLOW;
-                                messageReceived = true;
-                            }
+            {
+                if (client.parseMessage() > 0) {
+                    String parsed = parseMessage(client);
+                    Serial.println(parsed);
+
+                    if (parsed.startsWith("PARTNER:")) {
+                        String command = parsed.substring(8);
+                        command.trim();
+
+                        if (command == "State: Done") {
+                            demo = FOLLOW_YELLOW_TO_WALL;
                         }
-                        delay(50);
                     }
                 }
                 break;
+            }
 
             // ---------------------------------------------------------
             // 7. Drive until Yellow
@@ -384,7 +382,7 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
                 motor.pivotCCW();
                 delay(900);
                 motor.stop();
-                demo = WAIT_FOR_BLUE;
+                demo = FOLLOW_YELLOW_TO_WALL;
                 break;
 
             // ---------------------------------------------------------
