@@ -190,7 +190,7 @@ void jointDemo(Motor &motor, WebSocketClient &client)
                 client.print("following yellow");
                 client.endMessage();
                 motor.followLane(LEFT_EDGE, COLOR_YELLOW, client); 
-                if (detectDistance(-300)) {
+                if (detectDistance(-400)) {
                     motor.stop();
                     demo = TURN_LEFT_FINAL;
                 }
@@ -214,9 +214,12 @@ void jointDemo(Motor &motor, WebSocketClient &client)
                 if(detectDistance(-370)) {
                     delay(100);
                     motor.stop();
-                    client.beginMessage(TYPE_TEXT);
-                    client.print("State: Done");
-                    client.endMessage();
+                    while (1) {
+                        client.beginMessage(TYPE_TEXT);
+                        client.print("State: Done");
+                        client.endMessage();
+                        delay(2000);
+                    }
                     demo  = DEMO_DONE;
                 }
                 break;
@@ -252,6 +255,7 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
                         command.trim();
 
                         if (command == "State: Red") {
+                            delay(2500); // Make sure DEI is out of the way
                             demo = DRIVE_TO_FIRST_WALL;
                         }
                     }
@@ -279,7 +283,7 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
                 // motor.pivotCW();
                 // delay(1500);        // Tune experimentally
                 // motor.stop();
-                motor.gyroTurn(170);
+                motor.gyroTurn(150);
                 demo = DRIVE_TO_BLUE;
                 break;
 
@@ -309,7 +313,7 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
             // 4. PIVOT CounterClockwise 90°
             // ---------------------------------------------------------
             case TURN_LEFT_AT_BLUE:
-                motor.pivotCCW();
+                motor.pivotCW();
                 delay(900);
                 motor.stop();
                 demo = FOLLOW_BLUE_TO_WALL;
@@ -319,7 +323,7 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
             // 5. Follow Blue Lane until Wall
             // ---------------------------------------------------------
             case FOLLOW_BLUE_TO_WALL:
-                motor.followLane(LEFT_EDGE, COLOR_BLUE, client);  
+                motor.followLane(RIGHT_EDGE, COLOR_BLUE, client);  
                 if (detectDistance(-300)) {
                     motor.stop();
                     demo = TURN_LEFT_AFTER_BLUE_WALL;
@@ -330,7 +334,7 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
             // 6. Pivot CCW 90°
             // ---------------------------------------------------------
             case TURN_LEFT_AFTER_BLUE_WALL:
-                motor.pivotCCW();
+                motor.pivotCW();
                 delay(900);
                 motor.stop();
                 demo = DRIVE_TO_YELLOW;
@@ -379,7 +383,7 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
             // 8. Pivot Left 90°
             // ---------------------------------------------------------
             case TURN_LEFT_AT_YELLOW:
-                motor.pivotCCW();
+                motor.pivotCW();
                 delay(900);
                 motor.stop();
                 demo = FOLLOW_YELLOW_TO_WALL;
@@ -389,8 +393,8 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
             // 10. Follow Yellow until Wall
             // ---------------------------------------------------------
             case FOLLOW_YELLOW_TO_WALL:
-                motor.followLane(LEFT_EDGE, COLOR_YELLOW, client); 
-                if (detectDistance(-300)) {
+                motor.followLane(RIGHT_EDGE, COLOR_YELLOW, client); 
+                if (detectDistance(-400)) {
                     motor.stop();
                     demo = TURN_LEFT_FINAL;
                 }
@@ -400,7 +404,7 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
             // 11. Turn Left 90°
             // ---------------------------------------------------------
             case TURN_LEFT_FINAL:
-                motor.pivotCCW();
+                motor.pivotCW();
                 delay(900);
                 motor.stop();
                 demo = RETURN_TO_START;
@@ -414,10 +418,14 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
                 if(detectDistance(-370)) {
                     delay(100);
                     motor.stop();
+                    while(1) {
+                        client.beginMessage(TYPE_TEXT);
+                        client.print("State: Done");
+                        client.endMessage();
+                        delay(1000);
+                    }
+
                     demo  = DEMO_DONE;
-                    client.beginMessage(TYPE_TEXT);
-                    client.print("State: Done");
-                    client.endMessage();
                 }
                 break;
 

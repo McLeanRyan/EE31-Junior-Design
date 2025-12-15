@@ -308,7 +308,7 @@ void Motor::gyroTurn(double angle)
     double kI = 0;
     double kD = 0;
     double kDrive = 1; // Scale output of PID controller to pass as speed
-    int baseSpeed = 90;
+    int baseSpeed = 110;
 
     imuZeroHeading();
     double current = imuGetHeading();

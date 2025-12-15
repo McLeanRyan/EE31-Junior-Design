@@ -40,12 +40,14 @@ void partnerDemo(Motor &motor, States state, WebSocketClient &client, int lineCo
             // 1. Drive Forward until Wall
             // ---------------------------------------------------------
             case DRIVE_TO_FIRST_WALL:
-                motor.driveForward(180);
-                if (detectDistance(-400)) {    // Wall detected
-                    motor.stop();
-                    delay(300);
-                    demo = PIVOT_AROUND;
-                }
+                // motor.driveForward(180);
+                // if (detectDistance(-400)) {    // Wall detected
+                //     motor.stop();
+                //     delay(300);
+                //     demo = PIVOT_AROUND;
+                // }
+                motor.gyroDriveToWall(180, -400);
+                demo = PIVOT_AROUND;
                 break;
 
             // ---------------------------------------------------------
@@ -151,7 +153,7 @@ void partnerDemo(Motor &motor, States state, WebSocketClient &client, int lineCo
             // ---------------------------------------------------------
             case FOLLOW_YELLOW_TO_WALL:
                 motor.followLane(LEFT_EDGE, COLOR_YELLOW, client);  
-                if (detectDistance(-400)) {
+                if (detectDistance(-200)) {
                     motor.stop();
                     demo = TURN_LEFT_FINAL;
                 }
@@ -174,6 +176,12 @@ void partnerDemo(Motor &motor, States state, WebSocketClient &client, int lineCo
                 motor.driveForward(180);
                 if (detectDistance(-400)) {  // Assume start has a wall
                     motor.stop();
+                    while(1) {
+                        client.beginMessage(TYPE_TEXT);
+                        client.println("State: Done");
+                        client.endMessage();
+                        delay(1000);
+                    }                    
                     demo = DEMO_DONE;
                 }
                 break;

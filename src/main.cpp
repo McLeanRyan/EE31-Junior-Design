@@ -73,6 +73,7 @@ int current_blue, current_yellow, current_red, current_class = 0;
 void loop() 
 {
     
+    
     Serial.println("Done Connecting");
     client.beginMessage(TYPE_TEXT);
     client.print(clientID);
@@ -84,8 +85,22 @@ void loop()
     //     detectColorClass(5);
     // }
     
+    // client.beginMessage(TYPE_TEXT);
+    // client.print("State: Red");
+    // client.endMessage();
+    // delay(30000);
+    // while(1){
+    //     // Serial.println(detectColorClass());
+        
+    //     client.beginMessage(TYPE_TEXT);
+    //     client.print("State: Done");
+    //     client.endMessage();
+    //     delay(1000);
+    // }
+
     // soloDemo(motor, client);
-    jointDemo(motor, client);
+    mirrorJointDemo(motor, client);
+
 
     messageState(client);
 
