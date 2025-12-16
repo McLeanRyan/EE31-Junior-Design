@@ -34,7 +34,11 @@ void setup() {
 
     colorDetectSetup();
 
-    initializeWifi(ssid, pass, status);
+    initializeWifi(ssid, pass);
+    irDetectSetup(100);
+    // client.begin();
+    imuSetup();
+
 }
 
 int current_blue, current_yellow, current_red, current_class = 0;
@@ -81,17 +85,32 @@ void loop() {
         //     Serial.println(state);
         // }
     
-        // if (Serial.available()) {
-        //     String input = Serial.readStringUntil('\n');
-        //     client.beginMessage(TYPE_TEXT);
-        //     client.print(input);
-        //     client.endMessage();
-        //     Serial.print("Sent from Serial: ");
-        //     Serial.println(input);
-        // }
+    Serial.println("Done Connecting");
+    // client.beginMessage(TYPE_TEXT);
+    // client.print(clientID);
+    // client.endMessage();
+    // client.beginMessage(TYPE_TEXT);
+    // client.print("Server Connected!");
+    // client.endMessage();
+    // while(true) {
+    //     detectColorClass(5);
+    // }
+    
+    // client.beginMessage(TYPE_TEXT);
+    // client.print("State: Red");
+    // client.endMessage();
+    // delay(30000);
+    // while(1){
+    //     // Serial.println(detectColorClass());
+        
+    //     client.beginMessage(TYPE_TEXT);
+    //     client.print("State: Done");
+    //     client.endMessage();
+    //     delay(1000);
+    // }
 
-        // Repeatedly blink to indicate current state 
-        // int blinkCount = state + 1;
+    mirrorDemo(motor, client);
+    // jointDemo(motor, client);
 
         // for (int i = 0; i < blinkCount; i++) {
         //     digitalWrite(LED_BUILTIN, HIGH);
