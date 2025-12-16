@@ -5,6 +5,10 @@
 #include "motorcontrol.h"
 #include "state.h"
 #include "colorDetect.h"
+#include "irDetect.h"
+#include "soloDemo.h"
+#include "jointDemo.h"
+#include "imu.h"
 
 /////// you can enter your sensitive data in the Secret tab/arduino_secrets.h
 /////// WiFi Settings ///////

@@ -7,6 +7,7 @@
 #include "soloDemo.h"
 #include "irDetect.h"
 #include "colorDetect.h"
+#include "motorcontrol.h"
 
 enum DemoState {
     DRIVE_TO_FIRST_WALL,

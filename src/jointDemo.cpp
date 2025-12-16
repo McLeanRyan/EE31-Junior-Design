@@ -8,6 +8,7 @@
 #include "irDetect.h"
 #include "colorDetect.h"
 #include "websocket.h"
+#include "motorcontrol.h"
 
 enum JointState {
     WAIT_FOR_RED,
