@@ -4,7 +4,6 @@
  *
  *  Defining the solo Demo logic
  */
-
 #ifndef SOLO_DEMO_H
 #define SOLO_DEMO_H
 #include "motorcontrol.h"

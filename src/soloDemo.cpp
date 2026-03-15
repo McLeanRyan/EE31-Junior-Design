@@ -7,7 +7,6 @@
 #include "soloDemo.h"
 #include "irDetect.h"
 #include "colorDetect.h"
-#include "motorcontrol.h"
 
 enum DemoState {
     DRIVE_TO_FIRST_WALL,
@@ -45,7 +44,7 @@ void soloDemo(Motor &motor, WebSocketClient &client)
 {
     DemoState demo = DRIVE_TO_FIRST_WALL;
 
-    while (demo != DEMO_DONE)
+    while (client.connected() && demo != DEMO_DONE)
     {
         switch (demo)
         {
@@ -70,7 +69,7 @@ void soloDemo(Motor &motor, WebSocketClient &client)
                 // motor.pivotCW();
                 // delay(1500);        // Tune experimentally
                 // motor.stop();
-                motor.gyroTurn(150);
+                motor.gyroTurn(170);
                 demo = DRIVE_TO_RED;
                 break;
 
@@ -85,7 +84,7 @@ void soloDemo(Motor &motor, WebSocketClient &client)
                     c = detectColorClass(5);
                     if (c == COLOR_RED) {
                         motor.stop();
-                        // delay(300);
+                        delay(300);
                         demo = TURN_LEFT_AT_RED;
                     }
                 }
@@ -117,10 +116,9 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // 6. Pivot CCW 90°
             // ---------------------------------------------------------
             case TURN_LEFT_AFTER_RED_WALL:
-                // motor.pivotCCW();
-                // delay(900);
-                // motor.stop();
-                motor.gyroTurn(90);
+                motor.pivotCCW();
+                delay(900);
+                motor.stop();
                 demo = DRIVE_TO_YELLOW;
                 break;
 
@@ -167,10 +165,9 @@ void soloDemo(Motor &motor, WebSocketClient &client)
             // 10. Turn Left 90°
             // ---------------------------------------------------------
             case TURN_LEFT_FINAL:
-                // motor.pivotCCW();
-                // delay(900);
-                // motor.stop();
-                motor.gyroTurn(75);
+                motor.pivotCCW();
+                delay(900);
+                motor.stop();
                 demo = RETURN_TO_START;
                 break;
 
@@ -182,7 +179,6 @@ void soloDemo(Motor &motor, WebSocketClient &client)
                 if(detectDistance(-370)) {
                     delay(100);
                     motor.stop();
-                    while(1){}
                     demo  = DEMO_DONE;
                 }
                 break;
@@ -201,7 +197,7 @@ void mirrorDemo(Motor &motor, WebSocketClient &client)
 {
     DemoState demo = DRIVE_TO_FIRST_WALL;
 
-    while (demo != DEMO_DONE)
+    while (client.connected() && demo != DEMO_DONE)
     {
         switch (demo)
         {
@@ -226,7 +222,7 @@ void mirrorDemo(Motor &motor, WebSocketClient &client)
                 // motor.pivotCW();
                 // delay(1500);        // Tune experimentally
                 // motor.stop();
-                motor.gyroTurn(150);
+                motor.gyroTurn(170);
                 demo = DRIVE_TO_BLUE;
                 break;
 
@@ -252,7 +248,7 @@ void mirrorDemo(Motor &motor, WebSocketClient &client)
             // 4. PIVOT CounterClockwise 90°
             // ---------------------------------------------------------
             case TURN_LEFT_AT_BLUE:
-                motor.pivotCW();
+                motor.pivotCCW();
                 delay(900);
                 motor.stop();
                 demo = FOLLOW_BLUE_TO_WALL;
@@ -262,7 +258,7 @@ void mirrorDemo(Motor &motor, WebSocketClient &client)
             // 5. Follow Blue Lane until Wall
             // ---------------------------------------------------------
             case FOLLOW_BLUE_TO_WALL:
-                motor.followLane(RIGHT_EDGE, COLOR_BLUE, client); 
+                motor.followLane(LEFT_EDGE, COLOR_BLUE, client); 
                 if (detectDistance(-280)) {
                     motor.stop();
                     demo = TURN_LEFT_AFTER_RED_WALL;
@@ -273,10 +269,9 @@ void mirrorDemo(Motor &motor, WebSocketClient &client)
             // 6. Pivot CCW 90°
             // ---------------------------------------------------------
             case TURN_LEFT_AFTER_RED_WALL:
-                // motor.pivotCW();
-                // delay(900);
-                // motor.stop();
-                motor.gyroTurn(-90);
+                motor.pivotCCW();
+                delay(900);
+                motor.stop();
                 demo = DRIVE_TO_YELLOW;
                 break;
 
@@ -302,7 +297,7 @@ void mirrorDemo(Motor &motor, WebSocketClient &client)
             // 8. Pivot Left 90°
             // ---------------------------------------------------------
             case TURN_LEFT_AT_YELLOW:
-                motor.pivotCW();
+                motor.pivotCCW();
                 delay(900);
                 motor.stop();
                 demo = FOLLOW_YELLOW_TO_WALL;
@@ -312,7 +307,7 @@ void mirrorDemo(Motor &motor, WebSocketClient &client)
             // 9. Follow Yellow until Wall
             // ---------------------------------------------------------
             case FOLLOW_YELLOW_TO_WALL:
-                motor.followLane(RIGHT_EDGE, COLOR_YELLOW, client); 
+                motor.followLane(LEFT_EDGE, COLOR_YELLOW, client); 
                 if (detectDistance(-300)) {
                     motor.stop();
                     demo = TURN_LEFT_FINAL;
@@ -323,10 +318,9 @@ void mirrorDemo(Motor &motor, WebSocketClient &client)
             // 10. Turn Left 90°
             // ---------------------------------------------------------
             case TURN_LEFT_FINAL:
-                // motor.pivotCW();
-                // delay(900);
-                // motor.stop();
-                motor.gyroTurn(-75);
+                motor.pivotCCW();
+                delay(900);
+                motor.stop();
                 demo = RETURN_TO_START;
                 break;
 
@@ -338,7 +332,6 @@ void mirrorDemo(Motor &motor, WebSocketClient &client)
                 if(detectDistance(-370)) {
                     delay(100);
                     motor.stop();
-                    while(1){}
                     demo  = DEMO_DONE;
                 }
                 break;

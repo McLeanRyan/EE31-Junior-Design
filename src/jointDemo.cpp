@@ -8,7 +8,6 @@
 #include "irDetect.h"
 #include "colorDetect.h"
 #include "websocket.h"
-#include "motorcontrol.h"
 
 enum JointState {
     WAIT_FOR_RED,
@@ -29,8 +28,7 @@ enum JointState {
     FOLLOW_YELLOW_TO_WALL,
     TURN_LEFT_FINAL,
     RETURN_TO_START,
-    DEMO_DONE,
-    WAIT_AT_YELLOW
+    DEMO_DONE
 };
 
 /* 1. Drives Forward until it detects wall
@@ -128,10 +126,9 @@ void jointDemo(Motor &motor, WebSocketClient &client)
             // 6. Pivot CCW 90°
             // ---------------------------------------------------------
             case TURN_LEFT_AFTER_RED_WALL:
-                // motor.pivotCCW();
-                // delay(900);
-                // motor.stop();
-                motor.gyroTurn(90);
+                motor.pivotCCW();
+                delay(900);
+                motor.stop();
                 demo = DRIVE_TO_YELLOW;
                 break;
 
@@ -319,34 +316,12 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
                 motor.pivotCW();
                 delay(900);
                 motor.stop();
-                delay(2500);
-                demo = WAIT_FOR_YELLOW;
+                demo = FOLLOW_BLUE_TO_WALL;
                 break;
 
             // ---------------------------------------------------------
             // 5. Follow Blue Lane until Wall
             // ---------------------------------------------------------
-            case WAIT_FOR_YELLOW:
-                client.beginMessage(TYPE_TEXT);
-                client.print("State: Blue");
-                client.endMessage();
-                if (client.parseMessage() > 0) {
-                    String parsed = parseMessage(client);
-                    Serial.println(parsed);
-
-                    if (parsed.startsWith("PARTNER:")) {
-                        String command = parsed.substring(8);
-                        command.trim();
-
-                        if (command == "State: Yellow") {
-                            delay(1000); // Make sure DEI is out of the way
-                            demo = FOLLOW_BLUE_TO_WALL;
-                        }
-                    }
-                }
-                break;
-                
-            
             case FOLLOW_BLUE_TO_WALL:
                 motor.followLane(RIGHT_EDGE, COLOR_BLUE, client);  
                 if (detectDistance(-300)) {
@@ -368,7 +343,7 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
             // ---------------------------------------------------------
             // 6.5 Pivot CCW 90°
             // ---------------------------------------------------------
-            case WAIT_AT_YELLOW:
+            case WAIT_FOR_YELLOW:
             {
                 if (client.parseMessage() > 0) {
                     String parsed = parseMessage(client);
@@ -408,11 +383,10 @@ void mirrorJointDemo(Motor &motor, WebSocketClient &client)
             // 8. Pivot Left 90°
             // ---------------------------------------------------------
             case TURN_LEFT_AT_YELLOW:
-                // motor.pivotCW();
-                // delay(900);
-                // motor.stop();
-                motor.gyroTurn(-75);
-                demo = WAIT_AT_YELLOW;
+                motor.pivotCW();
+                delay(900);
+                motor.stop();
+                demo = FOLLOW_YELLOW_TO_WALL;
                 break;
 
             // ---------------------------------------------------------

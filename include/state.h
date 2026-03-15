@@ -1,8 +1,16 @@
+/*
+ *  state.h
+ *
+ *
+ *  Defining the state Implementations,
+ */
+
 #ifndef STATES_H
 #define STATES_H
 #include "motorcontrol.h"
+#include <ArduinoHttpClient.h>
 
-// Define your shared state machine enum here
+// Defining the Available States
 enum States {
     STOP = 0,
     FORWARD,
@@ -10,12 +18,15 @@ enum States {
     PivotClockwise,
     PivotCounterClockwise,
     TurnRight,
-    TurnLeft
+    TurnLeft,
+    FollowLeft,
+    FollowRight
 };
 
 class Motor;
+class LineFollow;
 
 void nextState();
-void handleState(Motor& motor, States state);
+void handleState(Motor& motor, States state, WebSocketClient &client, int lineColor);
 
 #endif
