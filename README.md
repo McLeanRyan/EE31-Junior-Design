@@ -2,7 +2,7 @@
 
 An integrated hardware and software system for autonomous mobile robots! This project implements a robust state-machine architecture to handle environmental perception (color and distance), precise navigation (IMU-based PID control), and real-time coordination via WebSocket servers.
 
-## Key Features
+## Key Features 🔑
 
 * **PID-Controlled Navigation**: Utilizes the LSM6DS3 IMU to perform drift-corrected driving and precise axial turns using a PID control loop.
 * **Intelligent Perception**: 
@@ -11,7 +11,7 @@ An integrated hardware and software system for autonomous mobile robots! This pr
 * **Multi-Robot Synchronization**: Real-time communication via WebSockets to coordinate tasks between multiple robots (e.g., waiting for a partner to reach a specific state).
 * **State-Machine Architecture**: A modular approach to autonomous routines, allowing for complex behaviors like lane following, wall-pivoting, and targeted color searching.
 
-## System Architecture
+## System Architecture 💻
 
 The software is modularized into specialized drivers and high-level behavioral controllers:
 
@@ -20,14 +20,14 @@ The software is modularized into specialized drivers and high-level behavioral c
 * **Communication Layer**: A robust WebSocket client that parses server commands to facilitate "Self" vs "Partner" state updates.
 * **Autonomous Routines**: `jointDemo.cpp` and `soloDemo.cpp` implement the high-level logic for specific project guidelines.
 
-## Technical Details
+## Technical Details 📝
 
 * **Language**: C++
 * **Framework**: Arduino (specifically targeting WiFiNINA compatible boards)
 * **Communication**: WebSockets (TCP/IP)
 * **Sensors**: LSM6DS3 (IMU), IR Proximity, Analog Color Sensing
 
-## 🔧 Setup & Installation
+## Setup & Installation 🔧 
 
 1.  **Hardware**: Ensure the L298N motor driver, IMU, and sensors are wired according to the pin definitions in `motorcontrol.cpp` and `colorDetect.cpp`.
 2.  **Configuration**: Create a `secrets.h` file containing:
